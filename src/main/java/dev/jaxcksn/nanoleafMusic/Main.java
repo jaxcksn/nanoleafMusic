@@ -6,7 +6,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import jfxtras.styles.jmetro8.JMetro;
 
 public class Main extends Application {
     public static void main(String[] args) {
@@ -15,9 +14,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        JMetro jMetro = new JMetro(JMetro.Style.DARK);
         Parent root = FXMLLoader.load(getClass().getResource("/connectToDevice.fxml"));
         Scene scene = new Scene(root, 400, 300);
+        //TODO: Change to montserrat
         Font.loadFont(getClass().getResourceAsStream("/fonts/Raleway-Regular.ttf"),12);
         Font.loadFont(getClass().getResourceAsStream("/fonts/Raleway-Bold.ttf"),12);
         root.getStylesheets().add("/gui.css");

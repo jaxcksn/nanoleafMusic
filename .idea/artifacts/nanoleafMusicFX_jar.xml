@@ -12,7 +12,6 @@
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/commons-io/commons-io/2.5/commons-io-2.5.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-component-annotations/1.5.5/plexus-component-annotations-1.5.5.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/maven/maven-settings/3.0/maven-settings-3.0.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/thoughtworks/qdox/qdox/2.0-M8/qdox-2.0-M8.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-compiler-javac/2.8.4/plexus-compiler-javac-2.8.4.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/httpcomponents/client5/httpclient5-cache/5.0/httpclient5-cache-5.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar" path-in-jar="/" />
@@ -28,6 +27,15 @@
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/maven/maven-settings-builder/3.0/maven-settings-builder-3.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/pegdown/pegdown/1.6.0/pegdown-1.6.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/maven/maven-artifact/3.0/maven-artifact-3.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-15.0.1/lib/src.zip" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-15.0.1/lib/javafx-swt.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-15.0.1/lib/javafx.web.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-15.0.1/lib/javafx.base.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-15.0.1/lib/javafx.fxml.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-15.0.1/lib/javafx.media.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-15.0.1/lib/javafx.swing.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-15.0.1/lib/javafx.controls.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-15.0.1/lib/javafx.graphics.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-databind/2.10.2/jackson-databind-2.10.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/sonatype/aether/aether-util/1.7/aether-util-1.7.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-client/9.4.31.v20200723/jetty-client-9.4.31.v20200723.jar" path-in-jar="/" />
@@ -37,8 +45,9 @@
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/de/neuland-bfi/jade4j/1.2.5/jade4j-1.2.5.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/maven/maven-model-builder/3.0/maven-model-builder-3.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/maven/maven-core/3.0/maven-core-3.0.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/sonatype/sisu/sisu-guice/2.1.7/sisu-guice-2.1.7-noaop.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/controlsfx/controlsfx/8.40.14/controlsfx-8.40.14.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/maven/maven-plugin-api/3.0/maven-plugin-api-3.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/maven/shared/maven-shared-utils/3.2.1/maven-shared-utils-3.2.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/httpcomponents/client5/httpclient5/5.0/httpclient5-5.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/eclipse/jetty/websocket/websocket-servlet/9.4.31.v20200723/websocket-servlet-9.4.31.v20200723.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/parboiled/parboiled-java/1.1.7/parboiled-java-1.1.7.jar" path-in-jar="/" />
@@ -62,16 +71,9 @@
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/maven/shared/maven-shared-incremental/1.1/maven-shared-incremental-1.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/eclipse/jetty/websocket/websocket-common/9.4.31.v20200723/websocket-common-9.4.31.v20200723.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-core/2.10.2/jackson-core-2.10.2.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-11.0.2/lib/src.zip" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-11.0.2/lib/javafx-swt.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-11.0.2/lib/javafx.web.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-11.0.2/lib/javafx.base.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-11.0.2/lib/javafx.fxml.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-11.0.2/lib/javafx.media.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-11.0.2/lib/javafx.swing.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-11.0.2/lib/javafx.controls.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../javafx-sdk-11.0.2/lib/javafx.graphics.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/thoughtworks/qdox/qdox/2.0-M8/qdox-2.0-M8.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/ow2/asm/asm-util/5.0.3/asm-util-5.0.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/sonatype/sisu/sisu-guice/2.1.7/sisu-guice-2.1.7-noaop.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/maven/maven-model/3.0/maven-model-3.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-security/9.4.31.v20200723/jetty-security-9.4.31.v20200723.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/se/michaelthelin/spotify/spotify-web-api-java/6.3.0/spotify-web-api-java-6.3.0.jar" path-in-jar="/" />
@@ -89,7 +91,7 @@
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/sonatype/sisu/sisu-inject-bean/1.4.2/sisu-inject-bean-1.4.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/eclipse/jetty/websocket/websocket-api/9.4.31.v20200723/websocket-api-9.4.31.v20200723.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/parboiled/parboiled-core/1.1.7/parboiled-core-1.1.7.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/maven/shared/maven-shared-utils/3.2.1/maven-shared-utils-3.2.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jfxtras/jmetro/5.2/jmetro-5.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-io/9.4.31.v20200723/jetty-io-9.4.31.v20200723.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/sonatype/aether/aether-spi/1.7/aether-spi-1.7.jar" path-in-jar="/" />
     </root>
