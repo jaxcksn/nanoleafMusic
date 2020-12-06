@@ -1,5 +1,9 @@
 .root {
-	-fx-font-family: 'Raleway';
+	-fx-font-family: 'Montserrat';
+	-fx-accent: #71e390;
+	-fx-focus-color: #92e0a7;
+	-fx-faint-focus-color: #92e0a722;
+    -fx-default-button: #c2edce;
 }
 
 .title {
@@ -56,4 +60,19 @@
     -fx-background-color :derive(#4D4C4F,10.0%);
     -fx-background-insets : 2.0, 0.0, 0.0;
     -fx-background-radius : 2.0em;
+}
+
+.alert.information.dialog-pane {
+    -fx-graphic: url("images/info.png");
+}
+
+.alert.confirmation.dialog-pane,
+.text-input-dialog.dialog-pane,
+.choice-dialog.dialog-pane {
+    -fx-graphic: url("images/ask.png");
+}
+
+
+.alert.error.dialog-pane {
+    -fx-graphic: url("images/error.png");
 }

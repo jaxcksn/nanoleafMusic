@@ -144,7 +144,7 @@ public class PlaybackView {
     }
 
     public String toHexString(Color value) {
-        return "#" + (format(value.getRed()) + format(value.getGreen()) + format(value.getBlue()) + format(value.getOpacity()))
+        return "#" + (format(value.getRed()) + format(value.getGreen()) + format(value.getBlue()))
                 .toUpperCase();
     }
 
