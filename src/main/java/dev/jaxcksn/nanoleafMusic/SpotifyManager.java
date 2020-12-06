@@ -42,7 +42,7 @@ public class SpotifyManager {
         AuthorizationCodeUriRequest authorizationCodeUriRequest = null;
         try {
             authorizationCodeUriRequest = spotifyApi.authorizationCodePKCEUri(PKCE.generateCodeChallenge(pkceVerification))
-                    .scope("user-read-currently-playing, user-read-playback-state, user-modify-playback-state")
+                    .scope("user-read-currently-playing, user-read-playback-state")
                     .build();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
