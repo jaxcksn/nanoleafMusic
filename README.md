@@ -1,3 +1,5 @@
+<img src="./src/icon.png" align="right" width="200"/>
+
 # NanoleafMusic
 
 > Sync your Nanoleaf Light Panels with Spotify
