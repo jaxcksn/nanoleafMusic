@@ -29,7 +29,7 @@
          <bottom>
             <HBox alignment="CENTER_RIGHT" prefHeight="26.0" prefWidth="380.0" spacing="10.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button mnemonicParsing="false" onAction="#removeColor" prefHeight="27.0" prefWidth="86.0" text="Remove" />
+                  <Button mnemonicParsing="false" onAction="#removeColor" prefHeight="27.0" prefWidth="100.0" text="Remove" />
                   <VBox prefHeight="27.0" prefWidth="73.0" HBox.hgrow="ALWAYS" />
                   <ColorPicker fx:id="colorPicker" editable="true" promptText="Set a color" />
                   <Button mnemonicParsing="false" onAction="#addColor" prefHeight="27.0" prefWidth="119.0" text="Add Color" />
@@ -56,7 +56,7 @@
             </HBox>
          </top>
       </BorderPane>
-      <BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0" >
+      <BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0">
          <top>
             <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
                <children>
