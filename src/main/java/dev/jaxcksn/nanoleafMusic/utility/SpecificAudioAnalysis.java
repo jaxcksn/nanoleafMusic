@@ -149,6 +149,6 @@ public class SpecificAudioAnalysis
 
     private static boolean isInSensitivityRange(float confidence, float sensitivity)
     {
-        return confidence >= (float)(10-sensitivity)/10f;
+        return confidence >= (10-sensitivity) /10f;
     }
 }

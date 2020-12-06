@@ -5,7 +5,6 @@ import com.wrapper.spotify.SpotifyHttpManager;
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import com.wrapper.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
-import com.wrapper.spotify.requests.authorization.authorization_code.pkce.AuthorizationCodePKCERefreshRequest;
 import com.wrapper.spotify.requests.authorization.authorization_code.pkce.AuthorizationCodePKCERequest;
 import dev.jaxcksn.nanoleafMusic.utility.CallbackServer;
 import dev.jaxcksn.nanoleafMusic.utility.PKCE;
@@ -15,8 +14,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class SpotifyManager {
     final static private String CLIENT_ID = "e0323b6a37ad487d80275aca99407602";

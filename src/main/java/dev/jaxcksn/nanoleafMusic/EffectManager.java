@@ -25,18 +25,19 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class EffectManager {
     //--- Control Variables
     public SpotifyApi spotifyApi;
     private int expiresIn;
     public Aurora device;
-    private PlaybackView viewController;
+    private final PlaybackView viewController;
     public PulseBeat pulseBeat;
-    private CountDownLatch initLatch = new CountDownLatch(1);
+    private final CountDownLatch initLatch = new CountDownLatch(1);
 
     //--- Effect Variables
     private boolean isRunning, isPlaying = false;

@@ -10,17 +10,17 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+
 import java.awt.*;
 import java.util.Collections;
-import java.util.concurrent.TimeUnit;
 
 
 public class PlaybackView {
@@ -81,9 +81,7 @@ public class PlaybackView {
         albumColorsCheckbox.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
             colorPaletteSelector.setDisable(new_val);
             effectManager.settings.albumColors = new_val;
-            new Thread(()->{
-                DataManager.changeAlbumMode(new_val);
-            }).start();
+            new Thread(()-> DataManager.changeAlbumMode(new_val)).start();
         });
 
         colorList.setItems(colorValues);
@@ -98,7 +96,7 @@ public class PlaybackView {
     public void showColorView(ActionEvent event) {
         mainPane.setVisible(false);
         colorPane.setVisible(true);
-    };
+    }
 
     public void addColor(ActionEvent event) {
         Color selectedColor = colorPicker.getValue();
@@ -121,7 +119,7 @@ public class PlaybackView {
     }
 
     public void saveColors(ActionEvent event) {
-        StringBuilder colorString = new StringBuilder("");
+        StringBuilder colorString = new StringBuilder();
         for (int i = 0; i < colorValues.size(); i++) {
             colorString.append(colorValues.get(i));
             if (i != colorValues.size()-1) {
@@ -129,9 +127,7 @@ public class PlaybackView {
             }
         }
         effectManager.settings.colorPalette = colorString.toString();
-        new Thread(()-> {
-            DataManager.updateSettings(effectManager.settings);
-        }).start();
+        new Thread(()-> DataManager.updateSettings(effectManager.settings)).start();
         effectManager.palette = setColors(colorValues.toArray(new String[0]));
         effectManager.pulseBeat.setPalette(effectManager.palette);
         colorPane.setVisible(false);

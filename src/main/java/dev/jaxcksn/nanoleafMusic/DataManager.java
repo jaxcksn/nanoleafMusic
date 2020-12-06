@@ -16,7 +16,7 @@ import java.util.prefs.*;
  */
 
 public class DataManager {
-    private static final Preferences preferences = Preferences.userNodeForPackage(Main.class);;
+    private static final Preferences preferences = Preferences.userNodeForPackage(Main.class);
     public boolean hasSaved;
 
     public DataManager() {
@@ -26,13 +26,12 @@ public class DataManager {
 
     public void saveDevice(Aurora device) {
         preferences.remove("savedDevice");
-        StringBuilder str = new StringBuilder();
-        str.append(device.getHostName());
-        str.append(";");
-        str.append(device.getPort());
-        str.append(";");
-        str.append(device.getAccessToken());
-        preferences.put("savedDevice",str.toString());
+        String str = device.getHostName() +
+                ";" +
+                device.getPort() +
+                ";" +
+                device.getAccessToken();
+        preferences.put("savedDevice", str);
         try {
             preferences.flush();
         } catch (BackingStoreException e) {
