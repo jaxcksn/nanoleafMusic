@@ -24,7 +24,9 @@ Packages are available for:
 
 ### Step 1: Connecting to your Nanoleaf
 
-<img align="center" width="400" src="./assets/step1.png"/>
+<p align="center">
+  <img align="center" width="400" src="./assets/step1.png"/>
+</p>
 
 To connect your device, you must be on the same network as the device. Once you load the program, you should a list of the devices on the network. _If you don't see any devices, try pressing refresh a couple times._
 
@@ -38,7 +40,9 @@ Once you connect to a device, you will asked if you want to save the device info
 
 ### Step 2: Connecting to Spotify
 
-<img align="center" width="400" src="./assets/step2.png"/>
+<p align="center">
+  <img align="center" width="400" src="./assets/step2.png"/>
+</p>
 
 After connecting, you will be prompted to connect to Spotify. To do so, click the Connect to Spotify button and a browser will be opened. On that page, you will be prompted to sign into Spotify and then asked if you want to authorize this program. If you accept, you will be redirected to another page and if everything goes correctly you can return to the program.
 
@@ -46,7 +50,9 @@ After connecting, you will be prompted to connect to Spotify. To do so, click th
 
 ### Step 3: Starting the Effect
 
-<img align="center" width="400" src="./assets/step3.png"/>
+<p align="center">
+  <img align="center" width="400" src="./assets/step3.png"/>
+</p>
 
 To start the effect, play some music on Spotify, then press the Start button. Once the effect is running, you should see the album art and song information in the program and your device should be playing the effect.
 
@@ -54,7 +60,9 @@ The effect has two different ways to set the colors, **album art** and **color p
 
 ##### Setting the Color Palette
 
-<img align="center" width="400" src="./assets/step3.5.png"/>
+<p align="center">
+  <img align="center" width="400" src="./assets/step3.5.png"/>
+</p>
 
 To add a color to the palette, use the color selection dropdown, and then press the _Add Color_ button to add it to the list. To remove a color from the palette, select the color in the list, then press the remove button. Finally, press the save button to apply your changes and update the colors. To go back to album art mode, open the settings drop down and enable it again. When you exit the program, both your color palette and color made will be saved for next time. 
 
