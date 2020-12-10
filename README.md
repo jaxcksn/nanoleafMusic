@@ -52,7 +52,7 @@ After connecting, you will be prompted to connect to Spotify. To do so, click th
   <img align="center" width="400" src="./assets/step3.png"/>
 </p>
 
-To start the effect, play some music on Spotify, then press the Start button. Once the effect is running, you should see the album art and song information in the program and your device should be playing the effect.
+To start the effect, just play some music on Spotify.
 
 The effect has two different ways to set the colors, **album art** and **color palette** mode. The default mode is album art, where a 6 color palette is generated using the artwork for the playing track. The color palette mode lets you pick the colors you want. To enable this, open the settings dropdown and disable the _Use Album Colors_ checkbox. Then press the _Set Color Palette_ button. 
 
