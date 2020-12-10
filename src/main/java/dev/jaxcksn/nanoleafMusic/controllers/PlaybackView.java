@@ -10,9 +10,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -34,14 +35,12 @@ public class PlaybackView {
     public CheckMenuItem albumColorsCheckbox;
     public MenuItem colorPaletteSelector;
     public ColorPicker colorPicker;
-    public Button startButton;
     private EffectManager effectManager;
     private ObservableList<String> colorValues;
 
 
     public void initData(SpotifyApi spotifyApi, int expiresIn, Aurora device) {
         effectManager = new EffectManager(spotifyApi, expiresIn, device, this);
-        startButton.setDefaultButton(true);
         effectManagerReady();
     }
 
@@ -64,7 +63,6 @@ public class PlaybackView {
     }
 
     public void effectManagerReady() {
-
         Settings loadedSettings = effectManager.settings;
         colorValues = FXCollections.observableArrayList();
         if(loadedSettings.albumColors) {
@@ -81,18 +79,25 @@ public class PlaybackView {
         albumColorsCheckbox.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
             colorPaletteSelector.setDisable(new_val);
             effectManager.settings.albumColors = new_val;
-            new Thread(()-> DataManager.changeAlbumMode(new_val)).start();
+            new Thread(() -> DataManager.changeAlbumMode(new_val)).start();
         });
 
         colorList.setItems(colorValues);
+        effectManager.startEffect();
     }
 
-    public void setPlayback() {
-        trackName.setText("Not Playing");
-        trackArtists.setText("Play music to start");
-        albumArtView.setImage(new Image(String.valueOf(getClass().getResource("/images/gray-square.png"))));
+    public void setPlayback(boolean paused) {
+        if (!paused) {
+            trackName.setText("Not Playing");
+            trackArtists.setText("Play music to start the effect");
+            albumArtView.setImage(new Image(String.valueOf(getClass().getResource("/images/gray-square.png"))));
+        } else {
+            trackName.setText("Effect Paused");
+            trackArtists.setText("Resume playback to start the effect");
+            albumArtView.setImage(new Image(String.valueOf(getClass().getResource("/images/gray-square.png"))));
+        }
     }
-    
+
     public void showColorView(ActionEvent event) {
         mainPane.setVisible(false);
         colorPane.setVisible(true);
@@ -167,22 +172,5 @@ public class PlaybackView {
         }
 
         return pulseColors;
-    }
-
-
-    public void start(ActionEvent event) {
-        if(effectManager.getIsPlaying()) {
-
-            startButton.setVisible(false);
-            effectManager.startEffect();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText(null);
-            alert.setContentText("There is nothing playing on Spotify, you must be playing music before starting the effect.");
-            Toolkit.getDefaultToolkit().beep();
-            DialogPane dialogPane = alert.getDialogPane();
-            dialogPane.getStylesheets().add("/gui.css");
-            alert.showAndWait();
-        }
     }
 }
