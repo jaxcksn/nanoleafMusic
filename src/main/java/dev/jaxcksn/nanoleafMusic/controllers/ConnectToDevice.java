@@ -4,16 +4,17 @@ import dev.jaxcksn.nanoleafMusic.DataManager;
 import dev.jaxcksn.nanoleafMusic.Main;
 import dev.jaxcksn.nanoleafMusic.utility.DataManagerException;
 import io.github.rowak.nanoleafapi.Aurora;
-import io.github.rowak.nanoleafapi.StatusCodeException;
-import javafx.collections.FXCollections;
 import io.github.rowak.nanoleafapi.AuroraMetadata;
+import io.github.rowak.nanoleafapi.StatusCodeException;
 import io.github.rowak.nanoleafapi.tools.Setup;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -24,11 +25,12 @@ import net.straylightlabs.hola.sd.Instance;
 import net.straylightlabs.hola.sd.Query;
 import net.straylightlabs.hola.sd.Service;
 
-import java.awt.Toolkit;
+import java.awt.*;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.nio.BufferUnderflowException;
+import java.util.List;
 import java.util.*;
 
 public class ConnectToDevice {
@@ -53,11 +55,14 @@ public class ConnectToDevice {
 
         deviceList = FXCollections.observableArrayList();
         try {
-            findDevices();
+            Thread refreshThread = new Thread(() -> {
+                findDevices();
+                nanoleafList.setItems(deviceList);
+            });
+            refreshThread.start();
         } catch (BufferUnderflowException e) {
             System.out.println("No Devices Found.");
         }
-        nanoleafList.setItems(deviceList);
     }
 
     static class ipv6Exception extends Exception {
@@ -226,11 +231,15 @@ public class ConnectToDevice {
 
         deviceList = FXCollections.observableArrayList();
         try {
-            findDevices();
+            Thread refreshThread = new Thread(() -> {
+                findDevices();
+                nanoleafList.setItems(deviceList);
+            });
+            refreshThread.start();
         } catch (BufferUnderflowException e) {
             System.out.println("No Devices Found.");
         }
-        nanoleafList.setItems(deviceList);
+
     }
 
     private void getAccessToken(AuroraMetadata metadata) {

@@ -65,16 +65,6 @@ public class EffectManager {
         startRefreshTimer();
     }
 
-    public boolean getIsPlaying() {
-        try {
-            return getCurrentlyPlaying() != null;
-        } catch (ParseException |  IOException e) {
-            return false;
-        } catch (SpotifyWebApiException spotifyWebApiException) {
-            showSWAE(spotifyWebApiException);
-            return false;
-        }
-    }
 
     private void startRefreshTimer() {
         ScheduledExecutorService sES = Executors.newSingleThreadScheduledExecutor();
@@ -99,21 +89,15 @@ public class EffectManager {
     public void startEffect() {
         if(!isRunning) {
             isRunning = true;
-
-            //TODO: Add not playing catch.
-            initEffect();
-            try {
-                initLatch.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            //Prevents UI From Freezing Up when Nothing is Playing
+            new Thread(this::initEffect).start();
             if (!settings.albumColors) {
                 palette = PlaybackView.setColors(settings.colorPalette);
             }
 
             ScheduledExecutorService sES = Executors.newScheduledThreadPool(5);
             Runnable effectPulseTask = () -> {
-                if(isPlaying) {
+                if (isPlaying) {
                     try {
                         pulseTask();
                     } catch (StatusCodeException e) {
@@ -144,14 +128,11 @@ public class EffectManager {
                 TimeUnit.SECONDS.sleep(5);
                 currentlyPlaying = getCurrentlyPlaying();
             }
-            initLatch.countDown();
             currentTrack = ((Track) currentlyPlaying.getItem());
             currentTrackAnalysis = getTrackAnalysis(currentTrack.getId());
             progress = currentlyPlaying.getProgress_ms();
             isPlaying = true;
-            displayTrackInformation(true);
-            throw new SpotifyWebApiException("TESTING");
-
+            displayTrackInformation(true, false);
         } catch (ParseException | IOException | InterruptedException e) {
             e.printStackTrace();
         } catch (SpotifyWebApiException spotifyWebApiException) {
@@ -204,8 +185,9 @@ public class EffectManager {
         CurrentlyPlaying currentPlayback = getCurrentlyPlaying();
         if (currentPlayback == null) {
             isPlaying = false;
-            displayTrackInformation(false);
+            displayTrackInformation(false, false);
             CountDownLatch playLatch = new CountDownLatch(1);
+            System.out.println("playLatch active.");
             new Thread(() -> {
                 try {
                     CurrentlyPlaying current = getCurrentlyPlaying();
@@ -214,7 +196,7 @@ public class EffectManager {
                         current = getCurrentlyPlaying();
                     }
                     playLatch.countDown();
-                } catch (ParseException | IOException |  InterruptedException e) {
+                } catch (ParseException | IOException | InterruptedException e) {
                     e.printStackTrace();
                 } catch (SpotifyWebApiException spotifyWebApiException) {
                     showSWAE(spotifyWebApiException);
@@ -229,18 +211,18 @@ public class EffectManager {
             currentTrack = newTrack;
             currentTrackAnalysis = getTrackAnalysis(newTrack.getId());
             progress = currentPlayback.getProgress_ms();
-            displayTrackInformation(true);
+            displayTrackInformation(true, false);
         }
 
         float progressDifference = Math.abs(currentPlayback.getProgress_ms() - progress);
         if(currentPlayback.getIs_playing() && !isPlaying) {
             isPlaying = true;
-            progress = currentPlayback.getProgress_ms()+500;
-            displayTrackInformation(true);
+            progress = currentPlayback.getProgress_ms() + 500;
+            displayTrackInformation(true, false);
         } else if(!currentPlayback.getIs_playing() && isPlaying) {
             isPlaying = false;
             progress = currentPlayback.getProgress_ms();
-            displayTrackInformation(false);
+            displayTrackInformation(false, true);
         } else if (currentPlayback.getIs_playing() && progressDifference >= 10) {
             progress = currentPlayback.getProgress_ms();
         }
@@ -248,7 +230,7 @@ public class EffectManager {
 
     }
 
-    private void displayTrackInformation(boolean updateArt) {
+    private void displayTrackInformation(boolean updateArt, boolean isPaused) {
         if (!settings.albumColors) {
             if (updateArt) {
                 Image[] artwork = currentTrack.getAlbum().getImages();
@@ -280,7 +262,7 @@ public class EffectManager {
                     viewController.setPlayback(currentTrack.getName(), songArtists, artworkURL);
                 }).start();
             } else {
-                viewController.setPlayback();
+                viewController.setPlayback(isPaused);
             }
         }
     }
