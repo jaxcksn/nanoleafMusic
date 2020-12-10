@@ -10,14 +10,12 @@ NanoleafMusic is a quick and easy tool to sync your Spotify playback with your N
 
 ## Installation
 
-Installation is super simple, and you can install this program like you would most other programs on your platform. A Java runtime is packaged with the program, so you can simply download the appropriate package for your platform, and run it.
+Installation is super simple, and you can install this program like you would most other programs on your platform. A Java runtime is packaged with the program.
 
 Packages are available for:
 
-- MacOS (.app file)
+- MacOS (.dmg file)
 - Windows (.exe)
-- Linux (.deb & .rpm)
-
 
 
 ## Usage
