@@ -116,5 +116,4 @@ For future releases, here is my list of some of my goals ordered by priority:
 - [Nanoleaf Aurora](https://github.com/rowak/nanoleaf-aurora) package
 - [Spotify Web API Java](https://github.com/thelinmichael/spotify-web-api-java) package
 - [Color Thief Java](https://github.com/SvenWoltmann/color-thief-java) package under the [Creative Commons Attribution 2.5 License](http://creativecommons.org/licenses/by/2.5/)
-- [Spark Framework](https://sparkjava.com) under the Apache 2 License
 
