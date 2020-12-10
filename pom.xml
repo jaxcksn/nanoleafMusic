@@ -27,19 +27,14 @@
             <version>6.3.0</version>
         </dependency>
         <dependency>
-            <groupId>com.sparkjava</groupId>
-            <artifactId>spark-core</artifactId>
-            <version>2.9.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sparkjava</groupId>
-            <artifactId>spark-template-jade</artifactId>
-            <version>2.7.1</version>
-        </dependency>
-        <dependency>
             <groupId>de.androidpit</groupId>
             <artifactId>color-thief</artifactId>
             <version>1.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>net.straylightlabs</groupId>
+            <artifactId>hola</artifactId>
+            <version>0.2.3</version>
         </dependency>
     </dependencies>
 

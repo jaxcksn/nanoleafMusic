@@ -8,15 +8,22 @@ import com.wrapper.spotify.requests.authorization.authorization_code.Authorizati
 import com.wrapper.spotify.requests.authorization.authorization_code.pkce.AuthorizationCodePKCERequest;
 import dev.jaxcksn.nanoleafMusic.utility.CallbackServer;
 import dev.jaxcksn.nanoleafMusic.utility.PKCE;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import org.apache.hc.core5.http.ParseException;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 
 public class SpotifyManager {
-    final static private String CLIENT_ID = "e0323b6a37ad487d80275aca99407602";
+    final static private String CLIENT_ID = "e0323b6a37ad487d80275aca99407602"; //2
     final static private URI REDIRECT_URI = SpotifyHttpManager.makeUri("http://localhost:8001/connect");
     protected static String pkceVerification;
     public final SpotifyApi spotifyApi = new SpotifyApi.Builder()
@@ -57,8 +64,40 @@ public class SpotifyManager {
             spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
             spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
             expiresIn = authorizationCodeCredentials.getExpiresIn();
-        } catch (ParseException | SpotifyWebApiException | IOException e) {
+        } catch (ParseException | IOException e) {
             e.printStackTrace();
+        } catch (SpotifyWebApiException spotifyWebApiException) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Exception");
+            alert.setHeaderText("Spotify Web Api Exception");
+            alert.setContentText("An exception was thrown.");
+
+
+// Create expandable Exception.
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            spotifyWebApiException.printStackTrace(pw);
+            String exceptionText = sw.toString();
+
+            Label label = new Label("The exception stacktrace was:");
+
+            TextArea textArea = new TextArea(exceptionText);
+            textArea.setEditable(false);
+            textArea.setWrapText(true);
+
+            textArea.setMaxWidth(Double.MAX_VALUE);
+            textArea.setMaxHeight(Double.MAX_VALUE);
+            GridPane.setVgrow(textArea, Priority.ALWAYS);
+            GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+            GridPane expContent = new GridPane();
+            expContent.setMaxWidth(Double.MAX_VALUE);
+            expContent.add(label, 0, 0);
+            expContent.add(textArea, 0, 1);
+
+// Set expandable Exception into the dialog pane.
+            alert.getDialogPane().setExpandableContent(expContent);
+            alert.showAndWait();
         }
     }
 }

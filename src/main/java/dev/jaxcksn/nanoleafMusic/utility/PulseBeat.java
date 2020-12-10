@@ -78,7 +78,6 @@ public class PulseBeat {
         }
     }
 
-
     public void setPalette(int[][] colors) {
         if (!albumMode) {
             albumMode = true;

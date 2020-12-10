@@ -23,6 +23,7 @@ public class Main extends Application {
         Font.loadFont(getClass().getResourceAsStream("/fonts/Montserrat-SemiBold.ttf"),12);
         root.getStylesheets().add("/gui.css");
         stage.setTitle("nanoleafMusic");
+        stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
     }

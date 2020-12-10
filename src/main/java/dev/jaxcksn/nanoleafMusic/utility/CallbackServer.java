@@ -1,52 +1,165 @@
 package dev.jaxcksn.nanoleafMusic.utility;
-import spark.ModelAndView;
-import spark.template.jade.JadeTemplateEngine;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-
-import static spark.Spark.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class CallbackServer {
-    private final CountDownLatch codeLatch = new CountDownLatch(1);
-    protected String accessCode;
+protected static HttpServer server;
+private final authServerHandler requestHandler = new authServerHandler();
 
-    public CallbackServer() {
-        port(8001);
-        staticFiles.location("/public");
+static public class authServerHandler implements HttpHandler {
+    private final CountDownLatch tokenLatch = new CountDownLatch (1);
+    private String authCode;
 
-        after("/connect",(req,res)->{
-           codeLatch.countDown();
-        });
+    @Override
+    public void handle(HttpExchange httpExchange) throws IOException {
+        String requestParamValue = null;
 
-        get("/connect", (req,res)->{
-            Map<String, Boolean> map = new HashMap<>();
-            String code = req.queryParams("code");
-            if( code == null || code.isEmpty()) {
-                map.put("isError",true);
-                accessCode = "";
-                return new ModelAndView(map, "error");
-            } else {
-                map.put("isError", false);
-                accessCode = code;
-                return new ModelAndView(map, "connect");
-            }
 
-        }, new JadeTemplateEngine());
+        if ("GET".equals(httpExchange.getRequestMethod())) {
+            requestParamValue = handleGetRequest(httpExchange);
+        }
+
+        if (requestParamValue == null || requestParamValue.equals("SPOTIFYERROR")) {
+            String textResponse = "<html lang=\"en\">\n" +
+                    "<head>\n" +
+                    "    <meta charset=\"UTF-8\">\n" +
+                    "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+                    "    <title>Error</title>\n" +
+                    "    <link href=\"https://fonts.googleapis.com/css2?family=Montserrat:wght@400;900&display=swap\" rel=\"stylesheet\">\n" +
+                    "    <style>\n" +
+                    "        body {\n" +
+                    "            font-family: 'Montserrat', sans-serif;\n" +
+                    "            background-color:#DC143C;\n" +
+                    "        }\n" +
+                    "\n" +
+                    "        h1 {\n" +
+                    "            font-weight: 900;\n"+
+                    "        }\n" +
+                    "\n" +
+                    "        .vertical-center {\n" +
+                    "            height: 100vh;\n" +
+                    "            display: flex;\n" +
+                    "            flex-direction: column;\n" +
+                    "            justify-content: center;\n" +
+                    "            align-items: center;\n" +
+                    "            color: white;\n" +
+                    "        }\n" +
+                    "        </style>\n" +
+                    "</head>\n" +
+                    "<body>\n" +
+                    "    <div class=\"vertical-center\">\n" +
+                    "        <h1>Authentication Unsuccessful.</h1>\n" +
+                    "        <p>Please restart the program and try again.</p>\n" +
+                    "    </div>\n" +
+                    "</body>\n" +
+                    "</html>";
+            httpExchange.sendResponseHeaders(200, textResponse.length());
+            httpExchange.getResponseBody().write(textResponse.getBytes());
+            httpExchange.getResponseBody().flush();
+            httpExchange.getResponseBody().close();
+            System.exit(1);
+        } else {
+            authCode = requestParamValue;
+            String textResponse = "<!DOCTYPE html>\n" +
+                    "<html lang=\"en\">\n" +
+                    "<head>\n" +
+                    "    <meta charset=\"UTF-8\">\n" +
+                    "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+                    "    <title>Success!</title>\n" +
+                    "    <link href=\"https://fonts.googleapis.com/css2?family=Montserrat:wght@400;900&display=swap\" rel=\"stylesheet\">\n" +
+                    "    <style>\n" +
+                    "        body {\n" +
+                    "            font-family: 'Montserrat', sans-serif;\n" +
+                    "            background-color: Green;\n" +
+                    "        }\n" +
+                    "\n" +
+                    "        h1 {\n" +
+                    "            font-weight: 900;\n" +
+                    "        }\n" +
+                    "\n" +
+                    "        .vertical-center {\n" +
+                    "            height: 100vh;\n" +
+                    "            display: flex;\n" +
+                    "            flex-direction: column;\n" +
+                    "            justify-content: center;\n" +
+                    "            color: white;\n" +
+                    "            align-items: center;\n" +
+                    "        }\n" +
+                    "        </style>\n" +
+                    "</head>\n" +
+                    "<body>\n" +
+                    "    <div class=\"vertical-center\">\n" +
+                    "        <h1>Successfully Authenticated!!</h1>\n" +
+                    "        <p>You can now close this page.</p>\n" +
+                    "    </div>\n" +
+                    "</body>\n" +
+                    "</html>";
+            httpExchange.sendResponseHeaders(200, textResponse.length());
+            httpExchange.getResponseBody().write(textResponse.getBytes());
+            httpExchange.getResponseBody().flush();
+            httpExchange.getResponseBody().close();
+            tokenLatch.countDown();
+        }
+    }
+
+    private String handleGetRequest(HttpExchange httpExchange) {
+        String query = httpExchange.getRequestURI().toString().split("\\?")[1].split("=")[0];
+
+        if(!query.equals("code")) {
+            return "SPOTIFYERROR";
+        } else {
+            return httpExchange.
+                    getRequestURI()
+                    .toString()
+                    .split("\\?")[1]
+                    .split("=")[1];
+        }
 
 
     }
 
-    public String awaitAccessCode() {
+    private String fetchAuthCode() {
         try {
-            codeLatch.await();
+            tokenLatch.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return accessCode;
+        return authCode;
     }
 
-    public void stopServer() {
-        stop();
+}
+
+
+    public CallbackServer() {
+
+        try {
+            server = HttpServer.create(new InetSocketAddress("0.0.0.0", 8001), 0);
+            server.createContext("/connect", requestHandler);
+            ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
+            server.setExecutor(threadPoolExecutor);
+            server.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
+
+    public String getAuthCode() {
+        return requestHandler.fetchAuthCode();
+    }
+
+    public void destroy() {
+        server.stop(0);
+    }
+
 }

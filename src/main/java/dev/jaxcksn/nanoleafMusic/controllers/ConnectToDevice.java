@@ -17,13 +17,19 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import net.straylightlabs.hola.dns.Domain;
+import net.straylightlabs.hola.sd.Instance;
+import net.straylightlabs.hola.sd.Query;
+import net.straylightlabs.hola.sd.Service;
 
 import java.awt.Toolkit;
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.nio.BufferUnderflowException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class ConnectToDevice {
     @FXML
@@ -54,12 +60,83 @@ public class ConnectToDevice {
         nanoleafList.setItems(deviceList);
     }
 
+    static class ipv6Exception extends Exception {
+        String message;
+        ipv6Exception(String message) {
+            this.message=message;
+        }
+
+        @Override
+        public String toString() {
+            return "ipv6Exception{" +
+                    "message='" + message + '\'' +
+                    '}';
+        }
+    }
+
+    private List<AuroraMetadata> findNanoleaf() throws IOException {
+        List<AuroraMetadata> auroras = new ArrayList<>();
+
+        try {
+            Service service = Service.fromName("_nanoleafapi._tcp");
+            Query query = Query.createFor(service, Domain.LOCAL);
+            Set<Instance> instances = query.runOnce();
+            System.out.println("Num of Devices: "+instances.size());
+            instances.forEach((instance -> {
+                try {
+                    auroras.add(fromMDNSInstance(instance));
+                } catch (ipv6Exception e) {
+                    //Just move on.
+                }
+            }));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return auroras;
+    }
+
+    /**
+     * This is patch of the fromMDNSInstance function included in the Nanoleaf API Wrapper. It makes sure
+     * that the IPv4 address is used instead of the Ipv6 address.
+     *
+     * @param instance the MDNS instance to build from.
+     * @return an AuroraMetadata object
+     * @throws ipv6Exception
+     */
+    public static AuroraMetadata fromMDNSInstance(Instance instance) throws ipv6Exception {
+        AuroraMetadata metadata = new AuroraMetadata(null, 0, null, null);
+        Iterator<InetAddress> addresses = instance.getAddresses().iterator();
+        String hostName,deviceId;
+
+        InetAddress initialAddress = addresses.next();
+        if(initialAddress instanceof Inet4Address) {
+            hostName = initialAddress.getCanonicalHostName();
+            deviceId = initialAddress.getHostAddress();
+        } else {
+            InetAddress nextAddress = addresses.next();
+            if(nextAddress instanceof Inet4Address) {
+                hostName = nextAddress.getCanonicalHostName();
+                deviceId = nextAddress.getHostAddress();
+            } else {
+                System.out.println("No Devices Found");
+                throw new ipv6Exception("There are no available IPv4 addresses for the program to connect to.");
+            }
+        }
+
+        metadata.setHostName(hostName);
+        metadata.setPort(instance.getPort());
+        metadata.setDeviceId(deviceId);
+        metadata.setDeviceName(instance.getName());
+        return metadata;
+    }
+
 
     private void findDevices() {
         setLoading(true);
         List<AuroraMetadata> auroras = null;
         try {
-            auroras = Setup.findAuroras();
+            auroras = findNanoleaf();
             auroraList = auroras;
             for (AuroraMetadata aurora : auroras) {
                 System.out.println(aurora.getDeviceName());
@@ -126,6 +203,7 @@ public class ConnectToDevice {
             alert.setContentText("To connect, press and hold the power button on the device controller for 5 to 10 seconds until the LED indicator starts flashing white. Then press OK to attempt to connect.");
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.getStylesheets().add("/gui.css");
+            dialogPane.setMinHeight(Region.USE_PREF_SIZE);
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent() &&result.get() == ButtonType.OK) {
                 getAccessToken(selectedDevice);
@@ -162,6 +240,9 @@ public class ConnectToDevice {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setHeaderText("Save device for quick reconnect?");
             alert.setContentText("You can save the device and access token to quickly reconnect last time. Saving this device will overwrite any previous saved devices.");
+            DialogPane dialogPane = alert.getDialogPane();
+            dialogPane.setMinHeight(Region.USE_PREF_SIZE);
+            dialogPane.getStylesheets().add("/gui.css");
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 dataManager.saveDevice(connectedDevice);
@@ -173,6 +254,7 @@ public class ConnectToDevice {
             alert.setHeaderText("Error connecting to " + metadata.getDeviceName());
             alert.setContentText("The request to get a access token for the device was refused, please make sure that the LED indicator on the controller is flashing white before attempting to connect.");
             DialogPane dialogPane = alert.getDialogPane();
+            dialogPane.setMinHeight(Region.USE_PREF_SIZE);
             dialogPane.getStylesheets().add("/gui.css");
             alert.showAndWait();
             setLoading(false);

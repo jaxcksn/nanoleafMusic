@@ -11,6 +11,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.DialogPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 import java.awt.*;
@@ -38,15 +39,16 @@ public class ConnectToSpotify {
         if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
             try {
                 Desktop.getDesktop().browse(spotifyManager.connectURI);
-                String accessCode = spotifyManager.cbServer.awaitAccessCode();
+                String accessCode = spotifyManager.cbServer.getAuthCode();
                 spotifyManager.getCredentials(accessCode);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Spotify Connected");
                 alert.setContentText("Spotify was successfully connected.");
                 DialogPane dialogPane = alert.getDialogPane();
+                dialogPane.setMinHeight(Region.USE_PREF_SIZE);
                 dialogPane.getStylesheets().add("/gui.css");
                 alert.showAndWait();
-                spotifyManager.cbServer.stopServer();
+                spotifyManager.cbServer.destroy();
                 transitionToPlayer();
             } catch (IOException e) {
                 e.printStackTrace();

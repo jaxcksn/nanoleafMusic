@@ -19,11 +19,18 @@ import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
 import io.github.rowak.nanoleafapi.Aurora;
 import io.github.rowak.nanoleafapi.Color;
 import io.github.rowak.nanoleafapi.StatusCodeException;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import org.apache.hc.core5.http.ParseException;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
@@ -61,7 +68,10 @@ public class EffectManager {
     public boolean getIsPlaying() {
         try {
             return getCurrentlyPlaying() != null;
-        } catch (ParseException | SpotifyWebApiException | IOException e) {
+        } catch (ParseException |  IOException e) {
+            return false;
+        } catch (SpotifyWebApiException spotifyWebApiException) {
+            showSWAE(spotifyWebApiException);
             return false;
         }
     }
@@ -75,8 +85,10 @@ public class EffectManager {
                     spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
                     spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
                     expiresIn = authorizationCodeCredentials.getExpiresIn();
-                } catch (ParseException | SpotifyWebApiException | IOException e) {
+                } catch (ParseException | IOException e) {
                     e.printStackTrace();
+                } catch (SpotifyWebApiException spotifyWebApiException) {
+                    showSWAE(spotifyWebApiException);
                 }
         };
 
@@ -113,8 +125,10 @@ public class EffectManager {
             Runnable spotifyUpdateTask = () -> {
                 try {
                     spotifyTask();
-                } catch (ParseException | SpotifyWebApiException | IOException | InterruptedException e) {
+                } catch (ParseException | IOException | InterruptedException e) {
                     e.printStackTrace();
+                } catch (SpotifyWebApiException spotifyWebApiException) {
+                    showSWAE(spotifyWebApiException);
                 }
             };
 
@@ -136,10 +150,47 @@ public class EffectManager {
             progress = currentlyPlaying.getProgress_ms();
             isPlaying = true;
             displayTrackInformation(true);
+            throw new SpotifyWebApiException("TESTING");
 
-        } catch (ParseException | SpotifyWebApiException | IOException | InterruptedException e) {
+        } catch (ParseException | IOException | InterruptedException e) {
             e.printStackTrace();
+        } catch (SpotifyWebApiException spotifyWebApiException) {
+            showSWAE(spotifyWebApiException);
         }
+    }
+
+    private void showSWAE(SpotifyWebApiException spotifyWebApiException) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Exception");
+        alert.setHeaderText("Spotify Web Api Exception");
+        alert.setContentText("An exception was thrown.");
+
+
+// Create expandable Exception.
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        spotifyWebApiException.printStackTrace(pw);
+        String exceptionText = sw.toString();
+
+        Label label = new Label("The exception stacktrace was:");
+
+        TextArea textArea = new TextArea(exceptionText);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+
+        textArea.setMaxWidth(Double.MAX_VALUE);
+        textArea.setMaxHeight(Double.MAX_VALUE);
+        GridPane.setVgrow(textArea, Priority.ALWAYS);
+        GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+        GridPane expContent = new GridPane();
+        expContent.setMaxWidth(Double.MAX_VALUE);
+        expContent.add(label, 0, 0);
+        expContent.add(textArea, 0, 1);
+
+// Set expandable Exception into the dialog pane.
+        alert.getDialogPane().setExpandableContent(expContent);
+        alert.showAndWait();
     }
     // ---
 
@@ -163,8 +214,10 @@ public class EffectManager {
                         current = getCurrentlyPlaying();
                     }
                     playLatch.countDown();
-                } catch (ParseException | IOException | SpotifyWebApiException | InterruptedException e) {
+                } catch (ParseException | IOException |  InterruptedException e) {
                     e.printStackTrace();
+                } catch (SpotifyWebApiException spotifyWebApiException) {
+                    showSWAE(spotifyWebApiException);
                 }
             }).start();
             playLatch.await();
@@ -214,17 +267,16 @@ public class EffectManager {
                     Image[] artwork = currentTrack.getAlbum().getImages();
                     artworkURL = artwork[1].getUrl();
                 }
-
                 ArtistSimplified[] songArtists = currentTrack.getArtists();
 
                 new Thread(() -> {
-                    try {
-                        BufferedImage image = ImageIO.read(new URL(artworkURL));
-                        int[][] colorArray = ColorThief.getPalette(image, 6);
-                        pulseBeat.setPalette(colorArray);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                        try {
+                            BufferedImage image = ImageIO.read(new URL(artworkURL));
+                            int[][] colorArray = ColorThief.getPalette(image, 6);
+                            pulseBeat.setPalette(colorArray);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     viewController.setPlayback(currentTrack.getName(), songArtists, artworkURL);
                 }).start();
             } else {
