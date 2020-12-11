@@ -138,3 +138,4 @@ hs_err_pid*
 /src/main/java/META-INF/
 /src/main/resources/META-INF/
 .DS_Store
+/target/
