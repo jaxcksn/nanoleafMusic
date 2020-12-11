@@ -93,7 +93,8 @@ public class EffectManager {
                 palette = PlaybackView.setColors(settings.colorPalette);
             }
 
-            ScheduledExecutorService sES = Executors.newScheduledThreadPool(5);
+            ScheduledExecutorService sES = Executors.newScheduledThreadPool(4 * Runtime.getRuntime().availableProcessors());
+            System.out.println("\u001b[96;1mℹ\u001b[0m Using " + 4 * Runtime.getRuntime().availableProcessors() + " threads.");
             Runnable effectPulseTask = () -> {
                 if (isPlaying) {
                     try {
@@ -123,6 +124,7 @@ public class EffectManager {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
             sES.scheduleAtFixedRate(effectPulseTask, 0, 100, TimeUnit.MILLISECONDS);
             System.out.println("\u001b[92;1m✔\u001b[0m Pulse Timers Started");
             sES.scheduleAtFixedRate(spotifyUpdateTask, 0, 2000, TimeUnit.MILLISECONDS);
