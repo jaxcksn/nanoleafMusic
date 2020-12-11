@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020, Jaxcksn
+ * All rights reserved.
+ */
+
 package dev.jaxcksn.nanoleafMusic.controllers;
 
 import dev.jaxcksn.nanoleafMusic.DataManager;
@@ -67,6 +72,7 @@ public class ConnectToDevice {
 
     static class ipv6Exception extends Exception {
         String message;
+
         ipv6Exception(String message) {
             this.message=message;
         }
@@ -154,10 +160,10 @@ public class ConnectToDevice {
         //The button shouldn't be enabled if this is false.
         assert dataManager.hasSaved;
         try {
-          Aurora savedDevice = dataManager.loadDevice();
-          Alert alert = new Alert(Alert.AlertType.INFORMATION);
-          alert.setHeaderText("Connected to "+savedDevice.getName());
-          alert.setContentText("Successfully reconnected to saved device.");
+            Aurora savedDevice = dataManager.loadDevice();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("Connected to " + savedDevice.getName());
+            alert.setContentText("Successfully reconnected to saved device.");
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.getStylesheets().add("/gui.css");
             alert.showAndWait();

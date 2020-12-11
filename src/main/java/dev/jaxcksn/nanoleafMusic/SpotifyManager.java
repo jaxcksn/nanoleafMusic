@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020, Jaxcksn
+ * All rights reserved.
+ */
+
 package dev.jaxcksn.nanoleafMusic;
 
 import com.wrapper.spotify.SpotifyApi;

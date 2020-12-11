@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020, Jaxcksn
+ * All rights reserved.
+ */
+
 package dev.jaxcksn.nanoleafMusic.utility;
 
 import com.wrapper.spotify.model_objects.miscellaneous.AudioAnalysisSegment;
@@ -9,32 +14,25 @@ import java.util.List;
 import java.util.Random;
 
 public class PulseBeat {
-    private static class SpotifyEffectUtils
-    {
-        public static float getLoudness(float previousLoudness, SpecificAudioAnalysis analysis)
-        {
+    private static class SpotifyEffectUtils {
+        public static float getLoudness(float previousLoudness, SpecificAudioAnalysis analysis) {
             AudioAnalysisSegment segment = analysis.getSegment();
-            if (segment != null)
-            {
+            if (segment != null) {
                 float avg = (segment.getLoudnessMax() +
-                        segment.getLoudnessStart()+0.1f)/2f;
+                        segment.getLoudnessStart() + 0.1f) / 2f;
                 return loudnessToPercent(avg, segment.getLoudnessMax());
             }
             return previousLoudness;
         }
 
-        public static float loudnessToPercent(float loudness, float max)
-        {
+        public static float loudnessToPercent(float loudness, float max) {
             final float MIN = -40.0f;
-            if (loudness < MIN)
-            {
+            if (loudness < MIN) {
                 return 0f;
-            }
-            else if (loudness > max)
-            {
+            } else if (loudness > max) {
                 return 1f;
             }
-            return (1 - loudness/MIN);
+            return (1 - loudness / MIN);
         }
     }
 
@@ -137,12 +135,9 @@ public class PulseBeat {
                     panels, ceb, darker, INITIAL_TIME);
             new Thread(() ->
             {
-                try
-                {
+                try {
                     aurora.effects().displayEffect(ceb.build("", false));
-                }
-                catch (StatusCodeException sce)
-                {
+                } catch (StatusCodeException sce) {
                     sce.printStackTrace();
                 }
             }).start();
@@ -152,13 +147,10 @@ public class PulseBeat {
 
     public void setNeighbors(Panel panel, final List<Integer> marked,
                              Panel[] panels, CustomEffectBuilder ceb, java.awt.Color color,
-                             int time)
-    {
+                             int time) {
         time += 1;
-        for (Panel p : panel.getNeighbors(panels))
-        {
-            if (!marked.contains(p.getId()))
-            {
+        for (Panel p : panel.getNeighbors(panels)) {
+            if (!marked.contains(p.getId())) {
                 ceb.addFrame(p, new Frame(color.getRed(),
                         color.getGreen(), color.getBlue(), 0, time));
                 ceb.addFrame(p, new Frame(0, 0, 0, 0, 5));
@@ -168,24 +160,19 @@ public class PulseBeat {
         }
     }
 
-    private java.awt.Color applyLoudnessToColor(java.awt.Color color)
-    {
+    private java.awt.Color applyLoudnessToColor(java.awt.Color color) {
         float[] hsb = new float[3];
         hsb = java.awt.Color.RGBtoHSB(color.getRed(),
                 color.getGreen(), color.getBlue(), hsb);
-        hsb[2] = ((hsb[2]*100f)*loudness)/100f;
+        hsb[2] = ((hsb[2] * 100f) * loudness) / 100f;
         color = java.awt.Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
         return color;
     }
 
-    protected void setNextPaletteColor()
-    {
-        if (paletteIndex == palette.length-1)
-        {
+    protected void setNextPaletteColor() {
+        if (paletteIndex == palette.length - 1) {
             paletteIndex = 0;
-        }
-        else
-        {
+        } else {
             paletteIndex++;
         }
     }

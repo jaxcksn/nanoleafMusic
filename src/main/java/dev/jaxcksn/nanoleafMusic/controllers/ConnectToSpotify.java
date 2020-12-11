@@ -1,8 +1,13 @@
+/*
+ * Copyright (c) 2020, Jaxcksn
+ * All rights reserved.
+ */
+
 package dev.jaxcksn.nanoleafMusic.controllers;
 
 import dev.jaxcksn.nanoleafMusic.Main;
-import io.github.rowak.nanoleafapi.Aurora;
 import dev.jaxcksn.nanoleafMusic.SpotifyManager;
+import io.github.rowak.nanoleafapi.Aurora;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020, Jaxcksn
+ * All rights reserved.
+ */
+
 package dev.jaxcksn.nanoleafMusic.controllers;
 
 import dev.jaxcksn.nanoleafMusic.Main;

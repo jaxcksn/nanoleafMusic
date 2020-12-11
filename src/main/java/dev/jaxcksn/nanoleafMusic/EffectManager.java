@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020, Jaxcksn
+ * All rights reserved.
+ */
+
 package dev.jaxcksn.nanoleafMusic;
 
 import com.wrapper.spotify.SpotifyApi;
@@ -70,17 +75,17 @@ public class EffectManager {
     private void startRefreshTimer() {
         ScheduledExecutorService sES = Executors.newSingleThreadScheduledExecutor();
         Runnable refreshTask = () -> {
-                try {
-                    AuthorizationCodePKCERefreshRequest authorizationCodePKCERefreshRequest = spotifyApi.authorizationCodePKCERefresh().build();
-                    AuthorizationCodeCredentials authorizationCodeCredentials = authorizationCodePKCERefreshRequest.execute();
-                    spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
-                    spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
-                    expiresIn = authorizationCodeCredentials.getExpiresIn();
-                } catch (ParseException | IOException e) {
-                    e.printStackTrace();
-                } catch (SpotifyWebApiException spotifyWebApiException) {
-                    showSWAE(spotifyWebApiException);
-                }
+            try {
+                AuthorizationCodePKCERefreshRequest authorizationCodePKCERefreshRequest = spotifyApi.authorizationCodePKCERefresh().build();
+                AuthorizationCodeCredentials authorizationCodeCredentials = authorizationCodePKCERefreshRequest.execute();
+                spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
+                spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
+                expiresIn = authorizationCodeCredentials.getExpiresIn();
+            } catch (ParseException | IOException e) {
+                e.printStackTrace();
+            } catch (SpotifyWebApiException spotifyWebApiException) {
+                showSWAE(spotifyWebApiException);
+            }
         };
 
         sES.scheduleAtFixedRate(refreshTask,expiresIn/2,expiresIn, TimeUnit.SECONDS);
@@ -268,13 +273,13 @@ public class EffectManager {
                 ArtistSimplified[] songArtists = currentTrack.getArtists();
 
                 new Thread(() -> {
-                        try {
-                            BufferedImage image = ImageIO.read(new URL(artworkURL));
-                            int[][] colorArray = ColorThief.getPalette(image, 6);
-                            pulseBeat.setPalette(colorArray);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                    try {
+                        BufferedImage image = ImageIO.read(new URL(artworkURL));
+                        int[][] colorArray = ColorThief.getPalette(image, 6);
+                        pulseBeat.setPalette(colorArray);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     viewController.setPlayback(currentTrack.getName(), songArtists, artworkURL);
                 }).start();
             } else {
