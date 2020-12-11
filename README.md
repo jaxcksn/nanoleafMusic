@@ -14,8 +14,8 @@ Installation is super simple, and you can install this program like you would mo
 
 Packages are available for:
 
-- MacOS (.dmg file)
-- Windows (.exe)
+- [MacOS (.dmg file)](https://github.com/jaxcksn/nanoleafMusic/releases/download/v0.5-b/NanoleafMusic.dmg)
+- [Windows x64(.msi file)](https://github.com/jaxcksn/nanoleafMusic/releases/download/v0.5-b/NanoleafMusic_x64.msi)
 
 
 ## Usage
