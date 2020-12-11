@@ -1,131 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<StackPane stylesheets="@gui.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.jaxcksn.nanoleafMusic.controllers.PlaybackView">
-   <children>
-      <BorderPane fx:id="colorPane" prefHeight="200.0" prefWidth="200.0" visible="false">
-         <center>
-            <ListView fx:id="colorList" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets left="10.0" right="10.0" top="10.0" />
-               </BorderPane.margin>
-            </ListView>
-         </center>
-         <bottom>
-            <HBox alignment="CENTER_RIGHT" prefHeight="26.0" prefWidth="380.0" spacing="10.0" BorderPane.alignment="CENTER">
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.jaxcksn.nanoleafMusic.controllers.PlaybackView">
+   <top>
+      <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="title" text="nanoleaf" textAlignment="CENTER">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Text>
+            <Text fill="#0dcd40" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="title" text="Music">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Text>
+            <VBox prefHeight="27.0" prefWidth="144.0" HBox.hgrow="ALWAYS" />
+            <MenuButton mnemonicParsing="false" popupSide="TOP" text="Settings">
+              <items>
+                  <CheckMenuItem fx:id="albumColorsCheckbox" mnemonicParsing="false" selected="true" text="Use Album Colors" />
+                <MenuItem fx:id="colorPaletteSelector" disable="true" mnemonicParsing="false" onAction="#showColorView" text="Set Color Palette" />
+              </items>
+            </MenuButton>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
+      </HBox>
+   </top>
+   <center>
+      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="400.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="CENTER_LEFT" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="380.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#removeColor" prefHeight="27.0" prefWidth="100.0" text="Remove" />
-                  <VBox prefHeight="27.0" prefWidth="73.0" HBox.hgrow="ALWAYS" />
-                  <ColorPicker fx:id="colorPicker" editable="true" promptText="Set a color" />
-                  <Button mnemonicParsing="false" onAction="#addColor" prefHeight="27.0" prefWidth="119.0" text="Add Color" />
-               </children>
-               <BorderPane.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </BorderPane.margin>
-            </HBox>
-         </bottom>
-         <top>
-            <HBox BorderPane.alignment="CENTER">
-               <children>
-                  <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                  <ImageView fx:id="albumArtView" cache="true" fitHeight="160.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true" smooth="false">
+                     <image>
+                        <Image fx:id="albumArt" url="@images/gray-square.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets right="30.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <VBox prefHeight="115.0" prefWidth="200.0">
                      <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Color Palette" wrappingWidth="80.5263671875" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Now Playing:">
+                           <VBox.margin>
+                              <Insets bottom="20.0" top="20.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="trackName" strokeType="OUTSIDE" strokeWidth="0.0" text="Start Effect" wrappingWidth="180.0" VBox.vgrow="NEVER">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="5.0" />
+                           </VBox.margin>
+                        </Text>
+                        <Text fx:id="trackArtists" strokeType="OUTSIDE" strokeWidth="0.0" text="Play music to start the effect" wrappingWidth="180.0" />
                      </children>
                   </VBox>
-                  <VBox prefHeight="0.0" prefWidth="100.0" HBox.hgrow="ALWAYS" />
-                  <Button defaultButton="true" mnemonicParsing="false" onAction="#saveColors" text="Save" />
                </children>
-               <BorderPane.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </BorderPane.margin>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
             </HBox>
-         </top>
-      </BorderPane>
-      <BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0">
-         <top>
-            <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
-               <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="title" text="nanoleaf" textAlignment="CENTER">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Text>
-                  <Text fill="#0dcd40" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="title" text="Music">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Text>
-                  <VBox prefHeight="27.0" prefWidth="144.0" HBox.hgrow="ALWAYS" />
-                  <MenuButton mnemonicParsing="false" popupSide="TOP" text="Settings">
-                    <items>
-                        <CheckMenuItem fx:id="albumColorsCheckbox" mnemonicParsing="false" selected="true" text="Use Album Colors" />
-                      <MenuItem fx:id="colorPaletteSelector" disable="true" mnemonicParsing="false" onAction="#showColorView" text="Set Color Palette" />
-                    </items>
-                  </MenuButton>
-               </children>
-               <BorderPane.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </BorderPane.margin>
-            </HBox>
-         </top>
-         <center>
-            <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="400.0" BorderPane.alignment="CENTER">
-               <children>
-                  <HBox alignment="CENTER_LEFT" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="380.0">
-                     <children>
-                        <ImageView fx:id="albumArtView" cache="true" fitHeight="160.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true" smooth="false">
-                           <image>
-                              <Image fx:id="albumArt" url="@images/gray-square.png" />
-                           </image>
-                           <HBox.margin>
-                              <Insets right="30.0" />
-                           </HBox.margin>
-                        </ImageView>
-                        <VBox prefHeight="115.0" prefWidth="200.0">
-                           <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Now Playing:">
-                                 <VBox.margin>
-                                    <Insets bottom="20.0" top="20.0" />
-                                 </VBox.margin>
-                                 <font>
-                                    <Font size="15.0" />
-                                 </font>
-                              </Text>
-                              <Text fx:id="trackName" strokeType="OUTSIDE" strokeWidth="0.0" text="Start Effect" wrappingWidth="180.0" VBox.vgrow="NEVER">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets bottom="5.0" />
-                                 </VBox.margin>
-                              </Text>
-                              <Text fx:id="trackArtists" strokeType="OUTSIDE" strokeWidth="0.0"
-                                    text="Play music to start the effect" wrappingWidth="180.0"/>
-                           </children>
-                        </VBox>
-                     </children>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                  </HBox>
-               </children>
-               <BorderPane.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </BorderPane.margin>
-            </VBox>
-         </center>
-         <bottom>
-            <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" nodeOrientation="RIGHT_TO_LEFT" prefHeight="27.0" prefWidth="380.0" BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </BorderPane.margin>
-            </HBox>
-         </bottom>
-      </BorderPane>
-   </children>
-</StackPane>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
+      </VBox>
+   </center>
+   <bottom>
+      <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" nodeOrientation="RIGHT_TO_LEFT" prefHeight="27.0" prefWidth="380.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
+</BorderPane>
