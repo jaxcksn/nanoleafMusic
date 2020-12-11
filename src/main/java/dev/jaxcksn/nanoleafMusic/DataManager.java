@@ -1,13 +1,14 @@
 package dev.jaxcksn.nanoleafMusic;
 
 import com.github.kevinsawicki.http.HttpRequest;
+import dev.jaxcksn.nanoleafMusic.utility.DataManagerException;
 import dev.jaxcksn.nanoleafMusic.utility.Settings;
 import dev.jaxcksn.nanoleafMusic.utility.dMEC;
 import io.github.rowak.nanoleafapi.Aurora;
 import io.github.rowak.nanoleafapi.StatusCodeException;
-import dev.jaxcksn.nanoleafMusic.utility.DataManagerException;
 
-import java.util.prefs.*;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 /**
  * The entire purpose of this class is to manage the save data, and storing of Nanoleaf
@@ -84,12 +85,20 @@ public class DataManager {
     }
 
     public static void updateSettings(Settings settings) {
-        preferences.putBoolean("useAlbumColors",settings.albumColors);
-        preferences.put("colorPalette",settings.colorPalette);
+        preferences.putBoolean("useAlbumColors", settings.albumColors);
+        preferences.put("colorPalette", settings.colorPalette);
     }
 
     public static void changeAlbumMode(boolean b) {
-        preferences.putBoolean("useAlbumColors",b);
+        preferences.putBoolean("useAlbumColors", b);
+    }
+
+    public static void clearSavedData() {
+        try {
+            preferences.clear();
+        } catch (BackingStoreException e) {
+            e.printStackTrace();
+        }
     }
 
 

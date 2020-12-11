@@ -13,6 +13,7 @@ import com.wrapper.spotify.requests.data.player.GetUsersCurrentlyPlayingTrackReq
 import com.wrapper.spotify.requests.data.tracks.GetAudioAnalysisForTrackRequest;
 import de.androidpit.colorthief.ColorThief;
 import dev.jaxcksn.nanoleafMusic.controllers.PlaybackView;
+import dev.jaxcksn.nanoleafMusic.utility.PaletteColor;
 import dev.jaxcksn.nanoleafMusic.utility.PulseBeat;
 import dev.jaxcksn.nanoleafMusic.utility.Settings;
 import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
@@ -90,7 +91,7 @@ public class EffectManager {
         if(!isRunning) {
             isRunning = true;
             if (!settings.albumColors) {
-                palette = PlaybackView.setColors(settings.colorPalette);
+                palette = PaletteColor.toEffectColorArray(settings.colorPalette);
             }
 
             ScheduledExecutorService sES = Executors.newScheduledThreadPool(4 * Runtime.getRuntime().availableProcessors());
