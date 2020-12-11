@@ -2,6 +2,10 @@ package dev.jaxcksn.nanoleafMusic.utility;
 
 public class Settings {
     public boolean albumColors;
+    /**
+     * This is a debug setting, and should only be changed manually in preferences.
+     * Adjusting can cause performance issues, so do it at your own risk.
+     */
     public int albumPaletteLength;
     public String colorPalette;
 
