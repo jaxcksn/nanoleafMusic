@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <!--
   ~ Copyright (c) 2020, Jaxcksn
   ~ All rights reserved.
@@ -15,7 +14,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/11.0.1"
+            prefHeight="300.0" prefWidth="400.0" stylesheets="@gui.css" xmlns="http://javafx.com/javafx/11.0.1"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.jaxcksn.nanoleafMusic.controllers.PlaybackView">
    <top>
       <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
@@ -31,12 +30,14 @@
                </HBox.margin>
             </Text>
             <VBox prefHeight="27.0" prefWidth="144.0" HBox.hgrow="ALWAYS"/>
-            <MenuButton mnemonicParsing="false" popupSide="TOP" text="Settings">
+            <MenuButton mnemonicParsing="false" text="SETTINGS">
                <items>
                   <CheckMenuItem fx:id="albumColorsCheckbox" mnemonicParsing="false" selected="true"
                                  text="Use Album Colors"/>
                   <MenuItem fx:id="colorPaletteSelector" disable="true" mnemonicParsing="false"
                             onAction="#showColorView" text="Set Color Palette"/>
+                  <MenuItem fx:id="reloadEffectItem" onAction="#reloadEffectManager" mnemonicParsing="false"
+                            text="Reload Effect"/>
                </items>
             </MenuButton>
          </children>

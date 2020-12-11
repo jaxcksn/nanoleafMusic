@@ -36,6 +36,7 @@ public class PlaybackView {
     public BorderPane mainPane;
     public CheckMenuItem albumColorsCheckbox;
     public MenuItem colorPaletteSelector;
+    public MenuItem reloadEffectItem;
     private EffectManager effectManager;
 
     private Scene palettePickerScene;
@@ -107,5 +108,9 @@ public class PlaybackView {
         Stage stage = new Stage();
         stage.setScene(palettePickerScene);
         stage.show();
+    }
+
+    public void reloadEffectManager(ActionEvent event) {
+        effectManager.reloadEffect();
     }
 }

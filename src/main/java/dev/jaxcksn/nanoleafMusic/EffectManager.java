@@ -58,22 +58,47 @@ public class EffectManager {
     private int progress;
     private String artworkURL = "@images/gray-square.png";
     public Settings settings;
-    public Color[] palette = new Color[]{Color.RED,Color.BLUE,Color.GREEN};
+    public Color[] palette = new Color[]{Color.RED, Color.BLUE, Color.GREEN};
+    private ScheduledExecutorService sES;
 
     public EffectManager(SpotifyApi spotifyApi, int expiresIn, Aurora device, PlaybackView viewController) {
         this.spotifyApi = spotifyApi;
         this.expiresIn = expiresIn;
         this.device = device;
         this.viewController = viewController;
-        this.pulseBeat = new PulseBeat(palette,device);
+        this.pulseBeat = new PulseBeat(palette, device);
         settings = DataManager.loadSettings();
         System.out.println("\u001b[92;1m✔\u001b[0m Effect Manager Loaded");
         startRefreshTimer();
     }
 
+    public void reloadEffect() {
+        System.out.println("\n\u001b[96;1m\u001b[0m Attempting to Restart Effect");
+        sES.shutdownNow();
+        try {
+            if (!sES.awaitTermination(30, TimeUnit.SECONDS)) {
+                System.err.println("Pool did not terminate");
+            } else {
+                isPlaying = false;
+                isRunning = false;
+                if (settings.albumColors) {
+                    displayTrackInformation(false, false);
+                } else {
+                    pulseBeat.setPalette(palette);
+                }
+                this.startEffect();
+                System.out.println("\u001b[92;1m✔\u001b[0m Finished Restarting Effect\n");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
 
     private void startRefreshTimer() {
-        ScheduledExecutorService sES = Executors.newSingleThreadScheduledExecutor();
+        ScheduledExecutorService rsES = Executors.newSingleThreadScheduledExecutor();
         Runnable refreshTask = () -> {
             try {
                 AuthorizationCodePKCERefreshRequest authorizationCodePKCERefreshRequest = spotifyApi.authorizationCodePKCERefresh().build();
@@ -88,7 +113,7 @@ public class EffectManager {
             }
         };
 
-        sES.scheduleAtFixedRate(refreshTask,expiresIn/2,expiresIn, TimeUnit.SECONDS);
+        rsES.scheduleAtFixedRate(refreshTask, expiresIn / 2, expiresIn, TimeUnit.SECONDS);
 
     }
 
@@ -99,7 +124,7 @@ public class EffectManager {
                 palette = PaletteColor.toEffectColorArray(settings.colorPalette);
             }
 
-            ScheduledExecutorService sES = Executors.newScheduledThreadPool(4 * Runtime.getRuntime().availableProcessors());
+            sES = Executors.newScheduledThreadPool(4 * Runtime.getRuntime().availableProcessors());
             System.out.println("\u001b[96;1mℹ\u001b[0m Using " + 4 * Runtime.getRuntime().availableProcessors() + " threads.");
             Runnable effectPulseTask = () -> {
                 if (isPlaying) {
