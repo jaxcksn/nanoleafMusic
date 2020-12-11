@@ -61,6 +61,7 @@ public class EffectManager {
         this.viewController = viewController;
         this.pulseBeat = new PulseBeat(palette,device);
         settings = DataManager.loadSettings();
+        System.out.println("\u001b[92;1m✔\u001b[0m Effect Manager Loaded");
         startRefreshTimer();
     }
 
@@ -88,8 +89,6 @@ public class EffectManager {
     public void startEffect() {
         if(!isRunning) {
             isRunning = true;
-            //Prevents UI From Freezing Up when Nothing is Playing
-            new Thread(this::initEffect).start();
             if (!settings.albumColors) {
                 palette = PlaybackView.setColors(settings.colorPalette);
             }
@@ -115,23 +114,39 @@ public class EffectManager {
                 }
             };
 
-            sES.scheduleAtFixedRate(effectPulseTask,0,100,TimeUnit.MILLISECONDS);
-            sES.scheduleAtFixedRate(spotifyUpdateTask,0,2000,TimeUnit.MILLISECONDS);
+            //Prevents UI From Freezing Up when Nothing is Playing
+            Thread initThread = new Thread(this::initEffect);
+            initThread.start();
+            System.out.println("\u001b[92;1m✔\u001b[0m Starting Initialization");
+            try {
+                initThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            sES.scheduleAtFixedRate(effectPulseTask, 0, 100, TimeUnit.MILLISECONDS);
+            System.out.println("\u001b[92;1m✔\u001b[0m Pulse Timers Started");
+            sES.scheduleAtFixedRate(spotifyUpdateTask, 0, 2000, TimeUnit.MILLISECONDS);
+            System.out.println("\u001b[92;1m✔\u001b[0m Spotify Update Timers Started");
+            displayTrackInformation(true, false);
         }
     }
 
     private void initEffect() {
         try {
             CurrentlyPlaying currentlyPlaying = getCurrentlyPlaying();
-            while (currentlyPlaying == null) {
+            if (currentlyPlaying == null) {
+                System.out.println("\u001b[96;1mℹ\u001b[0m Current Playback returned null, starting wait loop.");
+            }
+            while (currentlyPlaying == null && !isPlaying) {
                 TimeUnit.SECONDS.sleep(5);
                 currentlyPlaying = getCurrentlyPlaying();
             }
+            assert currentlyPlaying != null;
             currentTrack = ((Track) currentlyPlaying.getItem());
             currentTrackAnalysis = getTrackAnalysis(currentTrack.getId());
             progress = currentlyPlaying.getProgress_ms();
             isPlaying = true;
-            displayTrackInformation(true, false);
+            System.out.println("\u001b[92;1m✔\u001b[0m Finished initialization");
         } catch (ParseException | IOException | InterruptedException e) {
             e.printStackTrace();
         } catch (SpotifyWebApiException spotifyWebApiException) {
@@ -184,9 +199,8 @@ public class EffectManager {
         CurrentlyPlaying currentPlayback = getCurrentlyPlaying();
         if (currentPlayback == null) {
             isPlaying = false;
-            displayTrackInformation(false, false);
             CountDownLatch playLatch = new CountDownLatch(1);
-            System.out.println("playLatch active.");
+            displayTrackInformation(false, false);
             new Thread(() -> {
                 try {
                     CurrentlyPlaying current = getCurrentlyPlaying();
@@ -221,7 +235,7 @@ public class EffectManager {
         } else if(!currentPlayback.getIs_playing() && isPlaying) {
             isPlaying = false;
             progress = currentPlayback.getProgress_ms();
-            displayTrackInformation(false, true);
+            displayTrackInformation(true, true);
         } else if (currentPlayback.getIs_playing() && progressDifference >= 10) {
             progress = currentPlayback.getProgress_ms();
         }

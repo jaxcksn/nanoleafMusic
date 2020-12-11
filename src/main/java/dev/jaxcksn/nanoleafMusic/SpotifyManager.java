@@ -54,6 +54,7 @@ public class SpotifyManager {
         assert authorizationCodeUriRequest != null;
         connectURI = authorizationCodeUriRequest.execute();
         cbServer = new CallbackServer();
+        System.out.println("\u001b[92;1m✔\u001b[0m Started Callback Server");
     }
 
     public void getCredentials(String accessCode) {

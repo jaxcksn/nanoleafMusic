@@ -56,13 +56,13 @@ public class PulseBeat {
             e.printStackTrace();
         }
         random = new Random();
+        System.out.println("\u001b[92;1m✔\u001b[0m Pulse Beat Loaded");
     }
 
     private int[] adjustLuma(int[] color, double brightness) {
         float[] hsbColor = java.awt.Color.RGBtoHSB(color[0], color[1], color[2], null);
         float newBrightness = (float) (brightness*100 + random.nextInt(10))/100;
         hsbColor[2] = newBrightness;
-
 
         int rgb = java.awt.Color.HSBtoRGB(hsbColor[0], hsbColor[1], hsbColor[2]);
         int r = (rgb >> 16) & 0xFF;
@@ -80,6 +80,7 @@ public class PulseBeat {
 
     public void setPalette(int[][] colors) {
         if (!albumMode) {
+            System.out.println("\u001b[96;1mℹ\u001b[0m Changed to Album Mode");
             albumMode = true;
         }
         Color[] newPalette = new Color[colors.length];
@@ -108,6 +109,7 @@ public class PulseBeat {
     //If the palette is manually set
     public void setPalette(Color[] colors) {
         if(albumMode) {
+            System.out.println("\u001b[96;1mℹ\u001b[0m Changed to Palette Mode");
             albumMode = false;
         }
         palette = colors;

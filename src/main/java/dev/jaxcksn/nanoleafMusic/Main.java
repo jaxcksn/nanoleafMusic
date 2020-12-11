@@ -1,15 +1,22 @@
 package dev.jaxcksn.nanoleafMusic;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import org.slf4j.LoggerFactory;
 
 public class Main extends Application {
     public static void main(String[] args) {
+        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        root.setLevel(Level.INFO);
+        System.out.println("\u001b[92;1m✔\u001b[0m Starting Application");
         launch(args);
+
     }
 
     @Override

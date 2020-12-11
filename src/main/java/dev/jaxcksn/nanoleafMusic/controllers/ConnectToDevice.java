@@ -60,8 +60,8 @@ public class ConnectToDevice {
                 nanoleafList.setItems(deviceList);
             });
             refreshThread.start();
-        } catch (BufferUnderflowException e) {
-            System.out.println("No Devices Found.");
+        } catch (BufferUnderflowException ignored) {
+
         }
     }
 
@@ -86,12 +86,11 @@ public class ConnectToDevice {
             Service service = Service.fromName("_nanoleafapi._tcp");
             Query query = Query.createFor(service, Domain.LOCAL);
             Set<Instance> instances = query.runOnce();
-            System.out.println("Num of Devices: "+instances.size());
             instances.forEach((instance -> {
                 try {
                     auroras.add(fromMDNSInstance(instance));
-                } catch (ipv6Exception e) {
-                    //Just move on.
+                } catch (ipv6Exception ignored) {
+
                 }
             }));
         } catch (IOException e) {
@@ -124,7 +123,6 @@ public class ConnectToDevice {
                 hostName = nextAddress.getCanonicalHostName();
                 deviceId = nextAddress.getHostAddress();
             } else {
-                System.out.println("No Devices Found");
                 throw new ipv6Exception("There are no available IPv4 addresses for the program to connect to.");
             }
         }
@@ -144,7 +142,6 @@ public class ConnectToDevice {
             auroras = findNanoleaf();
             auroraList = auroras;
             for (AuroraMetadata aurora : auroras) {
-                System.out.println(aurora.getDeviceName());
                 deviceList.add(aurora.getDeviceName());
             }
         } catch (IOException e) {
@@ -163,8 +160,9 @@ public class ConnectToDevice {
           alert.setContentText("Successfully reconnected to saved device.");
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.getStylesheets().add("/gui.css");
-          alert.showAndWait();
-          transitionToSpotify(savedDevice);
+            alert.showAndWait();
+            System.out.println("\u001b[92;1m✔\u001b[0m Connected to Nanoleaf");
+            transitionToSpotify(savedDevice);
         } catch (DataManagerException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             String alertContent = "This is awkward, this shouldn't happen.";
@@ -237,7 +235,7 @@ public class ConnectToDevice {
             });
             refreshThread.start();
         } catch (BufferUnderflowException e) {
-            System.out.println("No Devices Found.");
+            System.out.println("\u001b[91;1mX\u001b[0m No Devices Found.");
         }
 
     }
@@ -256,6 +254,7 @@ public class ConnectToDevice {
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 dataManager.saveDevice(connectedDevice);
             }
+            System.out.println("\u001b[92;1m✔\u001b[0m Connected to Nanoleaf");
             transitionToSpotify(connectedDevice);
 
         } catch (StatusCodeException.ForbiddenException e) {

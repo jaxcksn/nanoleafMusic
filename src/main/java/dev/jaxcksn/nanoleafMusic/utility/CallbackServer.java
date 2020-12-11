@@ -1,13 +1,11 @@
 package dev.jaxcksn.nanoleafMusic.utility;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -108,6 +106,7 @@ static public class authServerHandler implements HttpHandler {
             httpExchange.getResponseBody().write(textResponse.getBytes());
             httpExchange.getResponseBody().flush();
             httpExchange.getResponseBody().close();
+            System.out.println("\u001b[92;1m✔\u001b[0m Spotify Authorization Given");
             tokenLatch.countDown();
         }
     }

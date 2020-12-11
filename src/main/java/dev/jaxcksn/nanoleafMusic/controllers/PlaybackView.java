@@ -73,7 +73,7 @@ public class PlaybackView {
             albumColorsCheckbox.setSelected(false);
         }
 
-        String[] savedColorPalette = loadedSettings.colorPalette.split(",", (int) Math.ceil((double) loadedSettings.colorPalette.length() /8));
+        String[] savedColorPalette = loadedSettings.colorPalette.split(",", (int) Math.ceil((double) loadedSettings.colorPalette.length() / 8));
         Collections.addAll(colorValues, savedColorPalette);
 
         albumColorsCheckbox.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
@@ -83,7 +83,10 @@ public class PlaybackView {
         });
 
         colorList.setItems(colorValues);
-        effectManager.startEffect();
+        new Thread(() -> {
+            effectManager.startEffect();
+        }).start();
+
     }
 
     public void setPlayback(boolean paused) {
