@@ -19,7 +19,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -34,7 +33,6 @@ import java.io.IOException;
 
 
 public class PlaybackView {
-    public Image albumArt;
     public Text trackName;
     public Text trackArtists;
     public BorderPane mainPane;
@@ -42,8 +40,6 @@ public class PlaybackView {
     public MenuItem colorPaletteSelector;
     public MenuItem reloadEffectItem;
     public Rectangle trackArtFrame;
-    public Label accent1;
-    public Text accent2;
     public MenuButton menuButton;
     private EffectManager effectManager;
 
