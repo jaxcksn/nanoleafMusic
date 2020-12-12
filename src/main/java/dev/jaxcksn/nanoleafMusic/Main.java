@@ -37,11 +37,12 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/connectToDevice.fxml"));
         Scene scene = new Scene(root, 400, 300);
-        //TODO: Change to montserrat
-        Font.loadFont(getClass().getResourceAsStream("/fonts/Montserrat-Regular.ttf"),12);
-        Font.loadFont(getClass().getResourceAsStream("/fonts/Montserrat-Bold.ttf"),12);
-        Font.loadFont(getClass().getResourceAsStream("/fonts/Montserrat-Medium.ttf"),12);
-        Font.loadFont(getClass().getResourceAsStream("/fonts/Montserrat-SemiBold.ttf"),12);
+
+        Font.loadFont(getClass().getResourceAsStream("/fonts/OpenSans-Regular.ttf"), 13);
+        Font.loadFont(getClass().getResourceAsStream("/fonts/OpenSans-Bold.ttf"), 12);
+        Font.loadFont(getClass().getResourceAsStream("/fonts/OpenSans-SemiBold.ttf"), 12);
+        Font.loadFont(getClass().getResourceAsStream("/fonts/OpenSans-ExtraBold.ttf"), 12);
+        Font.loadFont(getClass().getResourceAsStream("/fonts/HankRnd-Black.ttf"), 12);
         root.getStylesheets().add("/gui.css");
         stage.setTitle("nanoleafMusic");
         stage.setResizable(false);

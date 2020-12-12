@@ -38,10 +38,10 @@ public class CallbackServer {
                         "    <meta charset=\"UTF-8\">\n" +
                         "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
                         "    <title>Error</title>\n" +
-                        "    <link href=\"https://fonts.googleapis.com/css2?family=Montserrat:wght@400;900&display=swap\" rel=\"stylesheet\">\n" +
+                        "    <link href=\"https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;800&display=swap\" rel=\"stylesheet\">\n" +
                         "    <style>\n" +
                         "        body {\n" +
-                        "            font-family: 'Montserrat', sans-serif;\n" +
+                        "            font-family: 'Open Sans', sans-serif;\n" +
                         "            background-color:#DC143C;\n" +
                         "        }\n" +
                         "\n" +
@@ -79,15 +79,15 @@ public class CallbackServer {
                         "    <meta charset=\"UTF-8\">\n" +
                         "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
                         "    <title>Success!</title>\n" +
-                        "    <link href=\"https://fonts.googleapis.com/css2?family=Montserrat:wght@400;900&display=swap\" rel=\"stylesheet\">\n" +
+                        "    <link href=\"https://fonts.googleapis.com/css2?family==Open+Sans:wght@400;800&display=swap\" rel=\"stylesheet\">\n" +
                         "    <style>\n" +
                         "        body {\n" +
-                        "            font-family: 'Montserrat', sans-serif;\n" +
-                        "            background-color: Green;\n" +
+                        "            font-family: 'Open Sans', sans-serif;\n" +
+                        "            background-color: white;\n" +
                         "        }\n" +
                         "\n" +
                         "        h1 {\n" +
-                        "            font-weight: 900;\n" +
+                        "            font-weight: 800;\n" +
                         "        }\n" +
                         "\n" +
                         "        .vertical-center {\n" +
@@ -95,14 +95,14 @@ public class CallbackServer {
                         "            display: flex;\n" +
                         "            flex-direction: column;\n" +
                         "            justify-content: center;\n" +
-                        "            color: white;\n" +
+                        "            color: black;\n" +
                         "            align-items: center;\n" +
                         "        }\n" +
                         "        </style>\n" +
                         "</head>\n" +
                         "<body>\n" +
                         "    <div class=\"vertical-center\">\n" +
-                        "        <h1>Successfully Authenticated!!</h1>\n" +
+                        "        <h1>Spotify Connection was Successful</h1>\n" +
                         "        <p>You can now close this page.</p>\n" +
                         "    </div>\n" +
                         "</body>\n" +

@@ -10,6 +10,7 @@ import com.wrapper.spotify.model_objects.specification.ArtistSimplified;
 import dev.jaxcksn.nanoleafMusic.DataManager;
 import dev.jaxcksn.nanoleafMusic.EffectManager;
 import dev.jaxcksn.nanoleafMusic.Main;
+import dev.jaxcksn.nanoleafMusic.utility.PaletteColor;
 import dev.jaxcksn.nanoleafMusic.utility.Settings;
 import io.github.rowak.nanoleafapi.Aurora;
 import javafx.beans.value.ObservableValue;
@@ -18,10 +19,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -32,10 +37,14 @@ public class PlaybackView {
     public Image albumArt;
     public Text trackName;
     public Text trackArtists;
-    public ImageView albumArtView;
     public BorderPane mainPane;
     public CheckMenuItem albumColorsCheckbox;
     public MenuItem colorPaletteSelector;
+    public MenuItem reloadEffectItem;
+    public Rectangle trackArtFrame;
+    public Label accent1;
+    public Text accent2;
+    public MenuButton menuButton;
     private EffectManager effectManager;
 
     private Scene palettePickerScene;
@@ -74,25 +83,27 @@ public class PlaybackView {
         }
     }
 
-    public void setPlayback(String songName, ArtistSimplified[] artists, String albumArtwork) {
+    public void setPlayback(String songName, ArtistSimplified[] artists, String albumArtwork, PaletteColor accentColor) {
+        trackArtFrame.setFill(new ImagePattern(new Image(albumArtwork)));
         StringBuilder artistString = new StringBuilder("by ");
         for (int i = 1; i <= artists.length; i++) {
             int artistIndex = i - 1;
-            if(i>1 && i != artists.length) {
+            if (i > 1 && i != artists.length) {
                 artistString.append(", ");
-            } else if(i>1) {
+            } else if (i > 1) {
                 artistString.append(" & ");
             }
-
             artistString.append(artists[artistIndex].getName());
+            Parent root = mainPane.getScene().getRoot();
+            root.setStyle("-fx-playback-accent: " + accentColor.hexCode + ";");
         }
 
         trackName.setText(songName);
         trackArtists.setText(artistString.toString());
-        albumArtView.setImage(new Image(albumArtwork));
     }
 
     public void setPlayback(boolean paused) {
+        trackArtFrame.setFill(Color.web("#b5b5b5"));
         if (!paused) {
             trackName.setText("Not Playing");
             trackArtists.setText("Play music to start the effect");
@@ -100,12 +111,15 @@ public class PlaybackView {
             trackName.setText("Effect Paused");
             trackArtists.setText("Resume playback to start the effect");
         }
-        albumArtView.setImage(new Image(String.valueOf(getClass().getResource("/images/gray-square.png"))));
     }
 
     public void showColorView(ActionEvent event) {
         Stage stage = new Stage();
         stage.setScene(palettePickerScene);
         stage.show();
+    }
+
+    public void reloadEffectManager(ActionEvent event) {
+        effectManager.reloadEffect();
     }
 }

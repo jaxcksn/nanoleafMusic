@@ -1,15 +1,103 @@
 .root {
-	-fx-font-family: 'Montserrat';
+    -fx-background-playback: white;
+	-fx-font-family: 'Open Sans';
+	-fx-font-weight: 500;
 	-fx-accent: #71e390;
 	-fx-focus-color: #92e0a7;
 	-fx-faint-focus-color: #92e0a722;
     -fx-default-button: #c2edce;
+    -fx-background-color: -fx-background-playback;
+    -fx-playback-accent: #0FD95F;
+    -fx-playback-text: white;
 }
 
 .title {
+    -fx-font-family: 'HankRnd';
 	-fx-font-size: 18;
-	-fx-font-weight: 700;
-};
+	-fx-font-weight: 800;
+}
+
+.playback-heading {
+    -fx-text-fill: #0FD95F;
+    -fx-font-family: 'Open Sans';
+    -fx-font-weight: 700;
+    -fx-font-size: 15;
+}
+
+.playback-accent-text {
+    -fx-text-fill: -fx-playback-accent;
+    -fx-fill: -fx-playback-accent;
+}
+
+
+.button {
+    -fx-background-color: #0FD95F;
+    -fx-text-fill: white;
+    -fx-background-radius: 5px;
+    -fx-font-size: 12;
+    -fx-font-weight: 700;
+}
+
+.primaryBtn {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.26), 5, 0.12, -1, 2);
+}
+
+.primaryBtn:hover {
+    -fx-background-color: #0DC355;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0.12, -1, 2);
+}
+
+.imageFrame {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.26), 5, 0.12, -1, 2);
+}
+
+
+.secondaryBtn {
+    -fx-border-color: #0FD95F;
+    -fx-border-radius: 5px;
+    -fx-background-color: transparent;
+    -fx-text-fill: #0FD95F;
+}
+
+.secondaryBtn:hover {
+    -fx-background-color: #0FD95F;
+    -fx-text-fill: white;
+}
+
+.minimalBtn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #0FD95F;
+}
+
+.minimalBtn:hover {
+    -fx-text-fill: #0DC355;
+}
+
+
+.button:pressed {
+    -fx-scale-y: 0.9;
+    -fx-scale-x: 0.9;
+}
+
+.menu-button {
+    -fx-background-color: -fx-playback-accent;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.26), 5, 0.12, -1, 2);
+}
+
+.menu-button:hover {
+    -fx-background-color: derive(-fx-playback-accent, -20%);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0.12, -1, 2);
+}
+
+.menu-button > .label {
+    -fx-font-weight: 700;
+}
+
+.menu-button .arrow {
+    -fx-background-color: white,white;
+}
+
+
 
 .scroll-bar:horizontal .track,
 .scroll-bar:vertical .track{
@@ -75,4 +163,22 @@
 
 .alert.error.dialog-pane {
     -fx-graphic: url("images/error.png");
+}
+
+.color-picker {
+    -fx-background-color: #0FD95F;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.26), 5, 0.12, -1, 2);
+}
+
+.color-picker > .label {
+    -fx-text-fill: white;
+}
+
+.color-picker .arrow {
+    -fx-background-color: white,white;
+}
+
+.color-picker:hover {
+    -fx-background-color: #0DC355;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0.12, -1, 2);
 }
