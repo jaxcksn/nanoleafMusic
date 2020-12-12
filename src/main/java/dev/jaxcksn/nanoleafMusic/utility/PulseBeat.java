@@ -103,6 +103,7 @@ public class PulseBeat {
         }
 
         palette = newPalette;
+        /* Disabling this feature until I can prefect it.
         int betterColor = 0;
         int[] color0 = {newPalette[0].getRed(), newPalette[0].getGreen(), newPalette[0].getBlue()};
         int[] color1 = {newPalette[1].getRed(), newPalette[1].getGreen(), newPalette[1].getBlue()};
@@ -116,7 +117,9 @@ public class PulseBeat {
             }
         }
         accentColor = new PaletteColor(javafx.scene.paint.Color.rgb(newPalette[betterColor].getRed(), newPalette[betterColor].getGreen(), newPalette[betterColor].getBlue()));
+        */
     }
+
 
     private static double calculateColorful(int[] rgb) {
         double maxValue = largest(rgb);

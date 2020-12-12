@@ -32,7 +32,7 @@ Select the device you want to connect too, and press the connect button.  A dial
 
 ##### Step 1.5: Saving Device Info
 
-Once you connect to a device, you will asked if you want to save the device information for easy reconnection. Pressing yes will save the device host, port, and the access token to your platforms default [preferences location](https://victor.kropp.name/blog/java-preferences-api/) .  Pressing save will overwrite any device that is already saved. 
+Once you connect to a device, you will be asked if you want to save the device information for easy reconnection. Pressing yes will save the device host, port, and the access token to your platforms default [preferences location](https://victor.kropp.name/blog/java-preferences-api/) .  Pressing save will overwrite any device that is already saved. 
 
 
 
@@ -42,7 +42,7 @@ Once you connect to a device, you will asked if you want to save the device info
   <img align="center" width="400" src="./assets/step2.png"/>
 </p>
 
-After connecting, you will be prompted to connect to Spotify. To do so, click the Connect to Spotify button and a browser will be opened. On that page, you will be prompted to sign into Spotify and then asked if you want to authorize this program. If you accept, you will be redirected to another page and if everything goes correctly you can return to the program.
+After connecting, you will be prompted to connect to Spotify. To do so, click the _Connect to Spotify_ button, and a browser will be opened. On that page, you will be prompted to sign in to Spotify and then asked if you want to authorize this program. If you accept, you will be redirected to another page and if everything goes correctly you can return to the program.
 
 
 
@@ -64,30 +64,27 @@ The effect has two different ways to set the colors, **album art** and **color p
 
 To add a color to the palette, use the color selection dropdown, and then press the _Add Color_ button to add it to the list. To remove a color from the palette, select the color in the list, then press the remove button. Finally, press the save button to apply your changes and update the colors. To go back to album art mode, open the settings drop down and enable it again. When you exit the program, both your color palette and color made will be saved for next time. 
 
-**Note:** A redo of the UI for the color palette is a high priority for future releases, and will let you see the colors instead of just the hex codes.
-
-
 
 ## Troubleshooting
 
 * **Your Nanoleaf Device is not showing up on the list of devices**
 
-  - Check to make sure that you are on the same LAN as your Nanoleaf device, and that you can listen for and send MDNS packets.
+  - Check to make sure you are on the same LAN as your Nanoleaf device, and that you can listen for and send MDNS packets.
 
-  - Press the refresh button and see if it shows up. Sometimes the program fails in the initial MDNS discovery.
+  - Press the refresh button and see if it shows up. Sometimes the program fails in the initial MDNS discovery and can take a few tries to find the device.
 
     
 
 * **I can't connect to Spotify**
 
-  * Make sure that you are accepting the prompts in your browser and on the same device the program is running on. It listens at localhost on port 8001 for the response from Spotify.
+  * Make sure you are accepting the prompts in your browser and on the same device the program is running on. It listens at localhost on port 8001 for the response from Spotify.
 
     
 
 * **I've changed the song, but the program doesn't show the song has changed.**
 
   * It can take a moment for the program to notice the song has changed, but once you see it change on the program, it should be reflected on the device.
-  * If it still doesn't respond, the best thing you can do is restart the program. (I know it's annoying, but hopefully this will be patched in future releases).
+  * If it still doesn't respond, in the settings menu there is a _reload effect_ button. Press that to restart the effect. If it doesn't work, I recommend restarting the program.
 
 
 
@@ -95,12 +92,15 @@ To add a color to the palette, use the color selection dropdown, and then press 
 
 For future releases, here is my list of some of my goals ordered by priority:
 
-- [ ] Refactoring and Improving Performance
+#### v1.0:
+- [X] Refactoring and Improving Performance
+- [X] Redo of the Color Palette UI
+- [X] UI Overhaul
+
+#### v1.5:
 - [ ] Adding Java Documentation to Source Code
-- [ ] Redo of the Color Palette UI
 - [ ] Adding a Firework Effect
 - [ ] Adding Player Controls to UI
-
 
 
 ## Credits

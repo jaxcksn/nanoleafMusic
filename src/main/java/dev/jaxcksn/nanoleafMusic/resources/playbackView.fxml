@@ -41,6 +41,7 @@
                             onAction="#showColorView" text="Set Color Palette"/>
                   <MenuItem fx:id="reloadEffectItem" mnemonicParsing="false" onAction="#reloadEffectManager"
                             text="Reload Effect"/>
+                  <MenuItem fx:id="aboutMenuItem" onAction="#showAbout" mnemonicParsing="false" text="About"/>
                </items>
             </MenuButton>
          </children>

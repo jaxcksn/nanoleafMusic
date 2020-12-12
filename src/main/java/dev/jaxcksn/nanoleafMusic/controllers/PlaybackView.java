@@ -18,12 +18,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
@@ -34,7 +32,6 @@ import java.io.IOException;
 
 
 public class PlaybackView {
-    public Image albumArt;
     public Text trackName;
     public Text trackArtists;
     public BorderPane mainPane;
@@ -42,9 +39,8 @@ public class PlaybackView {
     public MenuItem colorPaletteSelector;
     public MenuItem reloadEffectItem;
     public Rectangle trackArtFrame;
-    public Label accent1;
-    public Text accent2;
     public MenuButton menuButton;
+    public MenuItem aboutMenuItem;
     private EffectManager effectManager;
 
     private Scene palettePickerScene;
@@ -121,5 +117,15 @@ public class PlaybackView {
 
     public void reloadEffectManager(ActionEvent event) {
         effectManager.reloadEffect();
+    }
+
+    public void showAbout(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText("About this Program");
+        alert.setContentText("NanoleafMusic v1.0.0 \nCopyright (c) 2020, Jaxcksn. All rights reserved.");
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.setMinHeight(Region.USE_PREF_SIZE);
+        dialogPane.getStylesheets().add("/gui.css");
+        alert.showAndWait();
     }
 }
