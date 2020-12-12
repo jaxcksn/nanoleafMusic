@@ -107,14 +107,10 @@ public class PulseBeat {
         int[] color0 = {newPalette[0].getRed(), newPalette[0].getGreen(), newPalette[0].getBlue()};
         int[] color1 = {newPalette[1].getRed(), newPalette[1].getGreen(), newPalette[1].getBlue()};
         int[] color2 = {newPalette[2].getRed(), newPalette[2].getGreen(), newPalette[2].getBlue()};
-        int[] color3 = {newPalette[3].getRed(), newPalette[3].getGreen(), newPalette[3].getBlue()};
-        if (calculateColorful(color1) >= calculateColorful(color0)) {
-            if (calculateColorful(color2) >= calculateColorful(color1)) {
-                if (calculateColorful(color3) >= calculateColorful(color2)) {
-                    betterColor = 3;
-                } else {
-                    betterColor = 2;
-                }
+        double color1Colorfulness = calculateColorful(color1);
+        if (color1Colorfulness >= calculateColorful(color0)) {
+            if (calculateColorful(color2) >= color1Colorfulness) {
+                betterColor = 2;
             } else {
                 betterColor = 1;
             }

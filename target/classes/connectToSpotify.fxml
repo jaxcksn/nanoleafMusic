@@ -5,19 +5,14 @@
   ~ All rights reserved.
   -->
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
-
 <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0" stylesheets="@gui.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.jaxcksn.nanoleafMusic.controllers.ConnectToSpotify">
    <BorderPane fx:id="borderPane" prefHeight="200.0" prefWidth="200.0">
       <top>
@@ -51,7 +46,7 @@
                   <Image url="@images/spotify.png" />
                </ImageView>
                <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
-                  <Label styleClass="playback-heading" text="Sync with Spotify" />
+                  <Label styleClass="playback-heading" text="Sync with Spotify"/>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Press the connect button to open a browser where you will be prompted to connect to spotify. Once you are done, you can return to this window." wrappingWidth="186.01806640625" />
                   <HBox.margin>
                      <Insets left="10.0" />
@@ -62,13 +57,14 @@
       </center>
       <bottom>
          <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
-            <Button maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#startConnection" prefHeight="30.0" styleClass="primaryBtn" text="CONNECT TO SPOTIFY">
+            <Button maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#startConnection"
+                    prefHeight="30.0" styleClass="primaryBtn" text="CONNECT TO SPOTIFY">
                <HBox.margin>
-                  <Insets />
+                  <Insets/>
                </HBox.margin>
             </Button>
             <BorderPane.margin>
-               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
             </BorderPane.margin>
          </HBox>
       </bottom>
