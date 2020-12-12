@@ -50,6 +50,7 @@ public class EffectManager {
     public Aurora device;
     private final PlaybackView viewController;
     public PulseBeat pulseBeat;
+    private final PaletteColor defaultAccent = new PaletteColor("#0FD95F");
 
     //--- Effect Variables
     private boolean isRunning, isPlaying = false;
@@ -73,7 +74,7 @@ public class EffectManager {
     }
 
     public void reloadEffect() {
-        System.out.println("\n\u001b[96;1m\u001b[0m Attempting to Restart Effect");
+        System.out.println("\n" + "\u001b[96;1mℹ\u001b[0m Attempting to Restart Effect");
         sES.shutdownNow();
         try {
             if (!sES.awaitTermination(30, TimeUnit.SECONDS)) {
@@ -287,7 +288,7 @@ public class EffectManager {
 
             new Thread(() -> {
                 pulseBeat.setPalette(palette);
-                viewController.setPlayback(currentTrack.getName(), songArtists, artworkURL);
+                viewController.setPlayback(currentTrack.getName(), songArtists, artworkURL, defaultAccent);
             }).start();
         } else {
             if (isPlaying) {
@@ -305,7 +306,7 @@ public class EffectManager {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    viewController.setPlayback(currentTrack.getName(), songArtists, artworkURL);
+                    viewController.setPlayback(currentTrack.getName(), songArtists, artworkURL, pulseBeat.accentColor);
                 }).start();
             } else {
                 viewController.setPlayback(isPaused);

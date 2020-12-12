@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
+<!--
+  ~ Copyright (c) 2020, Jaxcksn
+  ~ All rights reserved.
+  -->
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
@@ -14,7 +18,7 @@
 
 <StackPane prefHeight="300.0" prefWidth="400.0" stylesheets="@gui.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.jaxcksn.nanoleafMusic.controllers.ConnectToDevice">
    <children>
-      <BorderPane fx:id="selectPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0">
+      <BorderPane fx:id="selectPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0" stylesheets="@gui.css">
          <top>
             <HBox id="upperText" alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                <children>
@@ -55,14 +59,10 @@
          <bottom>
             <HBox maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" prefWidth="400.0" spacing="10.0">
                <children>
-                  <Button fx:id="reconnectBtn" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#reconnectToDevice" prefHeight="30.0" prefWidth="94.0" text="Reconnect" />
+                  <Button fx:id="reconnectBtn" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#reconnectToDevice" prefHeight="30.0" prefWidth="100.0" styleClass="secondaryBtn" text="RECONNECT" />
                   <HBox maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" prefWidth="79.0" HBox.hgrow="ALWAYS" />
-                  <Button maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#refreshList" prefHeight="30.0" prefWidth="77.0" text="Refresh" />
-                <Button maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#connectToSelected" prefHeight="30.0" prefWidth="74.0" text="Connect">
-                     <styleClass>
-                        <String fx:value="button" />
-                        <String fx:value="primary" />
-                     </styleClass></Button>
+                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#refreshList" prefHeight="30.0" prefWidth="90.0" styleClass="minimalBtn" text="REFRESH" />
+                <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#connectToSelected" prefHeight="30.0" prefWidth="90.0" styleClass="primaryBtn" text="CONNECT" />
                </children>
                <BorderPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

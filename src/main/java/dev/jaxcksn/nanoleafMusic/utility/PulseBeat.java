@@ -44,6 +44,7 @@ public class PulseBeat {
     private Panel[] panels;
     private int paletteIndex = 0;
     public boolean albumMode = false;
+    public PaletteColor accentColor = new PaletteColor("#0FD95F");
 
     public PulseBeat(Color[] palette, Aurora aurora) {
         this.palette = palette;
@@ -59,20 +60,20 @@ public class PulseBeat {
 
     private int[] adjustLuma(int[] color, double brightness) {
         float[] hsbColor = java.awt.Color.RGBtoHSB(color[0], color[1], color[2], null);
-        float newBrightness = (float) (brightness*100 + random.nextInt(10))/100;
+        float newBrightness = (float) (brightness * 100 + random.nextInt(10)) / 100;
         hsbColor[2] = newBrightness;
 
         int rgb = java.awt.Color.HSBtoRGB(hsbColor[0], hsbColor[1], hsbColor[2]);
         int r = (rgb >> 16) & 0xFF;
         int g = (rgb >> 8) & 0xFF;
         int b = rgb & 0xFF;
-
         double luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-        if (luma < 75 && brightness < 1) {
+
+        if (luma < 65 && brightness < 1) {
             //if it's still too dark.
-            return adjustLuma(new int[] {r,g,b},brightness+0.1);
+            return adjustLuma(new int[]{r, g, b}, brightness + 0.1);
         } else {
-            return new int[] {r,g,b};
+            return new int[]{r, g, b};
         }
     }
 
@@ -91,10 +92,10 @@ public class PulseBeat {
 
             // This mainly to stop colors that are just black, as they kind of ruin the effect.
             double luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-            if (luma < 75) {
+            if (luma < 65) {
                 //Let's lighten it.
-                int[] bright = adjustLuma(colors[i],0.5);
-                newPalette[i] = Color.fromRGB(bright[0],bright[1],bright[2]);
+                int[] bright = adjustLuma(colors[i], 0.5);
+                newPalette[i] = Color.fromRGB(bright[0], bright[1], bright[2]);
             } else {
                 newPalette[i] = Color.fromRGB(r, g, b);
             }
@@ -102,11 +103,62 @@ public class PulseBeat {
         }
 
         palette = newPalette;
+        int betterColor = 0;
+        int[] color0 = {newPalette[0].getRed(), newPalette[0].getGreen(), newPalette[0].getBlue()};
+        int[] color1 = {newPalette[1].getRed(), newPalette[1].getGreen(), newPalette[1].getBlue()};
+        int[] color2 = {newPalette[2].getRed(), newPalette[2].getGreen(), newPalette[2].getBlue()};
+        int[] color3 = {newPalette[3].getRed(), newPalette[3].getGreen(), newPalette[3].getBlue()};
+        if (calculateColorful(color1) >= calculateColorful(color0)) {
+            if (calculateColorful(color2) >= calculateColorful(color1)) {
+                if (calculateColorful(color3) >= calculateColorful(color2)) {
+                    betterColor = 3;
+                } else {
+                    betterColor = 2;
+                }
+            } else {
+                betterColor = 1;
+            }
+        }
+        accentColor = new PaletteColor(javafx.scene.paint.Color.rgb(newPalette[betterColor].getRed(), newPalette[betterColor].getGreen(), newPalette[betterColor].getBlue()));
+    }
+
+    private static double calculateColorful(int[] rgb) {
+        double maxValue = largest(rgb);
+        double minValue = smallest(rgb);
+        return ((maxValue + minValue) * (maxValue - minValue)) / maxValue;
+    }
+
+    private static int largest(int[] colors) {
+        int i;
+        // Initialize maximum element
+        int max = colors[0];
+        // Traverse array elements from second and
+        // compare every element with current max
+        for (i = 1; i < colors.length; i++) {
+            if (colors[i] > max) {
+                max = colors[i];
+            }
+        }
+        return max;
+    }
+
+    private static int smallest(int[] colors) {
+        int i;
+        // Initialize maximum element
+        int min = colors[0];
+        // Traverse array elements from second and
+        // compare every element with current max
+        for (i = 1; i < colors.length; i++) {
+            if (colors[i] < min) {
+                min = colors[i];
+            }
+        }
+        return min;
     }
 
     //If the palette is manually set
     public void setPalette(Color[] colors) {
-        if(albumMode) {
+        if (albumMode) {
             System.out.println("\u001b[96;1mℹ\u001b[0m Changed to Palette Mode");
             albumMode = false;
         }
