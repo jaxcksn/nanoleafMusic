@@ -92,9 +92,13 @@ To add a color to the palette, use the color selection dropdown, and then press 
 
 For future releases, here is my list of some of my goals ordered by priority:
 
+#### v1.0:
 - [X] Refactoring and Improving Performance
-- [ ] Adding Java Documentation to Source Code
 - [X] Redo of the Color Palette UI
+- [X] UI Overhaul
+
+#### v1.5:
+- [ ] Adding Java Documentation to Source Code
 - [ ] Adding a Firework Effect
 - [ ] Adding Player Controls to UI
 
