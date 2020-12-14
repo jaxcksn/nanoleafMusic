@@ -19,8 +19,8 @@ import com.wrapper.spotify.requests.data.tracks.GetAudioAnalysisForTrackRequest;
 import de.androidpit.colorthief.ColorThief;
 import dev.jaxcksn.nanoleafMusic.controllers.PlaybackView;
 import dev.jaxcksn.nanoleafMusic.effects.MusicEffect;
+import dev.jaxcksn.nanoleafMusic.effects.PulseBeatEffect;
 import dev.jaxcksn.nanoleafMusic.utility.PaletteColor;
-import dev.jaxcksn.nanoleafMusic.utility.PulseBeat;
 import dev.jaxcksn.nanoleafMusic.utility.Settings;
 import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
 import io.github.rowak.nanoleafapi.Aurora;
@@ -67,7 +67,7 @@ public class EffectManager {
         this.expiresIn = expiresIn;
         this.device = device;
         this.viewController = viewController;
-        this.activeEffect = new PulseBeat(palette, device);
+        this.activeEffect = new PulseBeatEffect(palette, device);
         settings = DataManager.loadSettings();
         System.out.println("\u001b[92;1m✔\u001b[0m Effect Manager Loaded");
         startRefreshTimer();

@@ -3,10 +3,11 @@
  * All rights reserved.
  */
 
-package dev.jaxcksn.nanoleafMusic.utility;
+package dev.jaxcksn.nanoleafMusic.effects;
 
 import com.wrapper.spotify.model_objects.miscellaneous.AudioAnalysisSegment;
-import dev.jaxcksn.nanoleafMusic.effects.MusicEffect;
+import dev.jaxcksn.nanoleafMusic.utility.PaletteColor;
+import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
 import io.github.rowak.nanoleafapi.*;
 import io.github.rowak.nanoleafapi.effectbuilder.CustomEffectBuilder;
 
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class PulseBeat implements MusicEffect {
+public class PulseBeatEffect implements MusicEffect {
     private static class SpotifyEffectUtils {
         public static float getLoudness(float previousLoudness, SpecificAudioAnalysis analysis) {
             AudioAnalysisSegment segment = analysis.getSegment();
@@ -47,7 +48,7 @@ public class PulseBeat implements MusicEffect {
     public boolean albumMode = false;
     public PaletteColor accentColor = new PaletteColor("#0FD95F");
 
-    public PulseBeat(Color[] palette, Aurora aurora) {
+    public PulseBeatEffect(Color[] palette, Aurora aurora) {
         this.palette = palette;
         this.aurora = aurora;
         try {
