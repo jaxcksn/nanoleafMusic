@@ -6,6 +6,7 @@
 
 NanoleafMusic is a quick and easy tool to sync your Spotify playback with your Nanoleaf light panels. It doesn't even require a rhythm module. You can use it with your own color palette, or have it use colors from the album art.
 
+**NOTE**: At this time, Canvas and Shapes are not supported. I only own and can test on the Light Panels so unless someone who has a Canvas or Shapes device would like to contribute and add support, it will likely will be awhile before either are supported.
 
 
 ## Installation
@@ -110,10 +111,8 @@ For future releases, here is my list of some of my goals ordered by priority:
 **HUGE** shoutout and thank you to [Ethan Rowan](https://github.com/rowak) and their prior work with the Nanoleaf API, especially their excellent [API wrapper](https://github.com/rowak/nanoleaf-aurora) and [desktop program](https://github.com/rowak/nanoleaf-desktop). Their program inspired this project. 
 
 
-
 ### Used Libraries 
 
 - [Nanoleaf Aurora](https://github.com/rowak/nanoleaf-aurora) package
 - [Spotify Web API Java](https://github.com/thelinmichael/spotify-web-api-java) package
 - [Color Thief Java](https://github.com/SvenWoltmann/color-thief-java) package under the [Creative Commons Attribution 2.5 License](http://creativecommons.org/licenses/by/2.5/)
-
