@@ -18,6 +18,7 @@ import com.wrapper.spotify.requests.data.player.GetUsersCurrentlyPlayingTrackReq
 import com.wrapper.spotify.requests.data.tracks.GetAudioAnalysisForTrackRequest;
 import de.androidpit.colorthief.ColorThief;
 import dev.jaxcksn.nanoleafMusic.controllers.PlaybackView;
+import dev.jaxcksn.nanoleafMusic.effects.MusicEffect;
 import dev.jaxcksn.nanoleafMusic.utility.PaletteColor;
 import dev.jaxcksn.nanoleafMusic.utility.PulseBeat;
 import dev.jaxcksn.nanoleafMusic.utility.Settings;
@@ -49,8 +50,7 @@ public class EffectManager {
     private int expiresIn;
     public Aurora device;
     private final PlaybackView viewController;
-    public PulseBeat pulseBeat;
-    private final PaletteColor defaultAccent = new PaletteColor("#0FD95F");
+    public MusicEffect activeEffect;
 
     //--- Effect Variables
     private boolean isRunning, isPlaying = false;
@@ -67,7 +67,7 @@ public class EffectManager {
         this.expiresIn = expiresIn;
         this.device = device;
         this.viewController = viewController;
-        this.pulseBeat = new PulseBeat(palette, device);
+        this.activeEffect = new PulseBeat(palette, device);
         settings = DataManager.loadSettings();
         System.out.println("\u001b[92;1m✔\u001b[0m Effect Manager Loaded");
         startRefreshTimer();
@@ -85,7 +85,7 @@ public class EffectManager {
                 if (settings.albumColors) {
                     displayTrackInformation(false, false);
                 } else {
-                    pulseBeat.setPalette(palette);
+                    activeEffect.setPalette(palette);
                 }
                 this.startEffect();
                 System.out.println("\u001b[92;1m✔\u001b[0m Finished Restarting Effect\n");
@@ -131,7 +131,7 @@ public class EffectManager {
                 if (isPlaying) {
                     try {
                         pulseTask();
-                    } catch (StatusCodeException e) {
+                    } catch (StatusCodeException | IOException e) {
                         e.printStackTrace();
                     }
                 }
@@ -223,9 +223,9 @@ public class EffectManager {
     }
     // ---
 
-    private void pulseTask() throws StatusCodeException {
-        SpecificAudioAnalysis analysis = SpecificAudioAnalysis.getAnalysis(currentTrackAnalysis,progress,100);
-        pulseBeat.run(analysis);
+    private void pulseTask() throws StatusCodeException, IOException {
+        SpecificAudioAnalysis analysis = SpecificAudioAnalysis.getAnalysis(currentTrackAnalysis, progress, 100);
+        activeEffect.run(analysis);
         progress += 100;
     }
 
@@ -287,8 +287,8 @@ public class EffectManager {
             ArtistSimplified[] songArtists = currentTrack.getArtists();
 
             new Thread(() -> {
-                pulseBeat.setPalette(palette);
-                viewController.setPlayback(currentTrack.getName(), songArtists, artworkURL, defaultAccent);
+                activeEffect.setPalette(palette);
+                viewController.setPlayback(currentTrack.getName(), songArtists, artworkURL);
             }).start();
         } else {
             if (isPlaying) {
@@ -302,11 +302,11 @@ public class EffectManager {
                     try {
                         BufferedImage image = ImageIO.read(new URL(artworkURL));
                         int[][] colorArray = ColorThief.getPalette(image, 6);
-                        pulseBeat.setPalette(colorArray);
+                        activeEffect.setPalette(colorArray);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    viewController.setPlayback(currentTrack.getName(), songArtists, artworkURL, pulseBeat.accentColor);
+                    viewController.setPlayback(currentTrack.getName(), songArtists, artworkURL);
                 }).start();
             } else {
                 viewController.setPlayback(isPaused);

@@ -6,6 +6,7 @@
 package dev.jaxcksn.nanoleafMusic.utility;
 
 import com.wrapper.spotify.model_objects.miscellaneous.AudioAnalysisSegment;
+import dev.jaxcksn.nanoleafMusic.effects.MusicEffect;
 import io.github.rowak.nanoleafapi.*;
 import io.github.rowak.nanoleafapi.effectbuilder.CustomEffectBuilder;
 
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class PulseBeat {
+public class PulseBeat implements MusicEffect {
     private static class SpotifyEffectUtils {
         public static float getLoudness(float previousLoudness, SpecificAudioAnalysis analysis) {
             AudioAnalysisSegment segment = analysis.getSegment();
@@ -176,8 +177,7 @@ public class PulseBeat {
             original = applyLoudnessToColor(original);
             java.awt.Color darker = original.darker().darker().darker();
             CustomEffectBuilder ceb = new CustomEffectBuilder(aurora);
-            ceb.addFrame(panelId, new Frame(original.getRed(),
-                    original.getGreen(), original.getBlue(), 0, 1));
+            ceb.addFrame(panelId, new Frame(original.getRed(), original.getGreen(), original.getBlue(), 0, 1));
             ceb.addFrame(panelId, new Frame(0, 0, 0, 0, 5));
             List<Integer> marked = new ArrayList<>();
             marked.add(panelId);

@@ -10,7 +10,6 @@ import com.wrapper.spotify.model_objects.specification.ArtistSimplified;
 import dev.jaxcksn.nanoleafMusic.DataManager;
 import dev.jaxcksn.nanoleafMusic.EffectManager;
 import dev.jaxcksn.nanoleafMusic.Main;
-import dev.jaxcksn.nanoleafMusic.utility.PaletteColor;
 import dev.jaxcksn.nanoleafMusic.utility.Settings;
 import io.github.rowak.nanoleafapi.Aurora;
 import javafx.beans.value.ObservableValue;
@@ -79,7 +78,7 @@ public class PlaybackView {
         }
     }
 
-    public void setPlayback(String songName, ArtistSimplified[] artists, String albumArtwork, PaletteColor accentColor) {
+    public void setPlayback(String songName, ArtistSimplified[] artists, String albumArtwork) {
         trackArtFrame.setFill(new ImagePattern(new Image(albumArtwork)));
         StringBuilder artistString = new StringBuilder("by ");
         for (int i = 1; i <= artists.length; i++) {
@@ -90,8 +89,8 @@ public class PlaybackView {
                 artistString.append(" & ");
             }
             artistString.append(artists[artistIndex].getName());
-            Parent root = mainPane.getScene().getRoot();
-            root.setStyle("-fx-playback-accent: " + accentColor.hexCode + ";");
+            //Parent root = mainPane.getScene().getRoot();
+            //root.setStyle("-fx-playback-accent:  #0FD95F;");
         }
 
         trackName.setText(songName);

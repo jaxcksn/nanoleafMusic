@@ -96,7 +96,7 @@ public class ConnectToDevice {
                 try {
                     auroras.add(fromMDNSInstance(instance));
                 } catch (ipv6Exception ignored) {
-
+                    System.out.println("IPV6Exception");
                 }
             }));
         } catch (IOException e) {
