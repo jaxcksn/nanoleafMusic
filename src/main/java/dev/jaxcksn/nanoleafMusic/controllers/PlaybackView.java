@@ -47,6 +47,7 @@ public class PlaybackView {
     public RadioMenuItem FireworksToggle;
     public RadioMenuItem PulseBeatToggle;
     public Label EffectLabel;
+    public RadioMenuItem VibeToggle;
     private EffectManager effectManager;
 
     private Scene palettePickerScene;
@@ -54,6 +55,7 @@ public class PlaybackView {
     public void initData(SpotifyApi spotifyApi, int expiresIn, Aurora device) {
         PulseBeatToggle.setUserData(EffectType.PULSEBEAT);
         FireworksToggle.setUserData(EffectType.FIREWORKS);
+        VibeToggle.setUserData(EffectType.VIBE);
 
         effectManager = new EffectManager(spotifyApi, expiresIn, device, this);
         Settings loadedSettings = effectManager.settings;
@@ -70,12 +72,20 @@ public class PlaybackView {
             case PULSEBEAT:
                 PulseBeatToggle.setSelected(true);
                 FireworksToggle.setSelected(false);
+                VibeToggle.setSelected(false);
                 EffectLabel.setText("PULSEBEAT");
                 break;
             case FIREWORKS:
                 PulseBeatToggle.setSelected(false);
                 FireworksToggle.setSelected(true);
+                VibeToggle.setSelected(false);
                 EffectLabel.setText("FIREWORKS");
+                break;
+            case VIBE:
+                PulseBeatToggle.setSelected(false);
+                FireworksToggle.setSelected(false);
+                VibeToggle.setSelected(true);
+                EffectLabel.setText("VIBE");
                 break;
         }
 
@@ -146,7 +156,9 @@ public class PlaybackView {
     }
 
     public void reloadEffectManager(ActionEvent event) {
+        setLoading(true);
         effectManager.reloadEffect();
+        setLoading(false);
     }
 
     private void setLoading(boolean status) {

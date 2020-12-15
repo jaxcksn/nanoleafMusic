@@ -6,5 +6,5 @@
 package dev.jaxcksn.nanoleafMusic.effects;
 
 public enum EffectType {
-    PULSEBEAT, FIREWORKS
+    PULSEBEAT, FIREWORKS, VIBE
 }

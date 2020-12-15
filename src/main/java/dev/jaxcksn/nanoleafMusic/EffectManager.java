@@ -18,10 +18,7 @@ import com.wrapper.spotify.requests.data.player.GetUsersCurrentlyPlayingTrackReq
 import com.wrapper.spotify.requests.data.tracks.GetAudioAnalysisForTrackRequest;
 import de.androidpit.colorthief.ColorThief;
 import dev.jaxcksn.nanoleafMusic.controllers.PlaybackView;
-import dev.jaxcksn.nanoleafMusic.effects.EffectType;
-import dev.jaxcksn.nanoleafMusic.effects.FireworkEffect;
-import dev.jaxcksn.nanoleafMusic.effects.MusicEffect;
-import dev.jaxcksn.nanoleafMusic.effects.PulseBeatEffect;
+import dev.jaxcksn.nanoleafMusic.effects.*;
 import dev.jaxcksn.nanoleafMusic.utility.PaletteColor;
 import dev.jaxcksn.nanoleafMusic.utility.Settings;
 import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
@@ -29,10 +26,12 @@ import io.github.rowak.nanoleafapi.Aurora;
 import io.github.rowak.nanoleafapi.Color;
 import io.github.rowak.nanoleafapi.StatusCodeException;
 import javafx.scene.control.Alert;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import org.apache.hc.core5.http.ParseException;
 
 import javax.imageio.ImageIO;
@@ -79,6 +78,9 @@ public class EffectManager {
             case PULSEBEAT:
                 this.activeEffect = new PulseBeatEffect(palette, device);
                 break;
+            case VIBE:
+                this.activeEffect = new VibeEffect(palette, device);
+                break;
         }
 
         System.out.println("\u001b[92;1m✔\u001b[0m Effect Manager Loaded");
@@ -96,6 +98,9 @@ public class EffectManager {
             case PULSEBEAT:
                 this.activeEffect = new PulseBeatEffect(currentPalette, device);
                 break;
+            case VIBE:
+                this.activeEffect = new VibeEffect(currentPalette, device);
+                break;
         }
     }
 
@@ -106,6 +111,13 @@ public class EffectManager {
         try {
             if (!sES.awaitTermination(30, TimeUnit.SECONDS)) {
                 System.err.println("Pool did not terminate");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setHeaderText("Error Reloading Effect");
+                alert.setContentText("There was issue stopping the scheduled executor tasks, and the program needs to be restarted.");
+                DialogPane dialogPane = alert.getDialogPane();
+                dialogPane.setMinHeight(Region.USE_PREF_SIZE);
+                dialogPane.getStylesheets().add("/gui.css");
+                alert.showAndWait();
             } else {
                 isPlaying = false;
                 isRunning = false;

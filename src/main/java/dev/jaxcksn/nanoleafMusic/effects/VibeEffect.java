@@ -5,23 +5,30 @@
 
 package dev.jaxcksn.nanoleafMusic.effects;
 
+import com.wrapper.spotify.model_objects.miscellaneous.AudioAnalysisMeasure;
 import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
 import io.github.rowak.nanoleafapi.*;
 import io.github.rowak.nanoleafapi.effectbuilder.CustomEffectBuilder;
 
+import java.util.List;
 import java.util.Random;
 
-public class FireworkEffect implements MusicEffect {
+/**
+ * More minimal beat effect, where the colors fade from one to another, and changes in the
+ * parts of the song changes the color.
+ */
+public class VibeEffect implements MusicEffect {
     public Color[] palette;
     public Aurora device;
     private Panel[] panels;
     private final Random random;
     public boolean albumMode = false;
     private int paletteIndex = 0;
-    public final EffectType effectType = EffectType.FIREWORKS;
+    public final EffectType effectType = EffectType.VIBE;
     public boolean songChanged = false;
+    private AudioAnalysisMeasure currentSection;
 
-    public FireworkEffect(Color[] palette, Aurora device) {
+    public VibeEffect(Color[] palette, Aurora device) {
         this.palette = palette;
         this.device = device;
         try {
@@ -30,7 +37,59 @@ public class FireworkEffect implements MusicEffect {
             e.printStackTrace();
         }
         this.random = new Random();
-        System.out.println("\u001b[92;1m✔\u001b[0m Fireworks Loaded");
+        paletteIndex = random.nextInt(palette.length);
+        System.out.println("\u001b[92;1m✔\u001b[0m Vibe Loaded");
+    }
+
+
+    @Override
+    public void setSongChanged() {
+        songChanged = true;
+    }
+
+    @Override
+    public void run(SpecificAudioAnalysis analysis) throws StatusCodeException {
+        if (analysis.getBeat() != null) {
+            if (currentSection == null) {
+                currentSection = analysis.getBar();
+            } else if (currentSection != analysis.getBar()) {
+                currentSection = analysis.getBar();
+                setNextPaletteColor();
+            }
+            Color color = palette[paletteIndex];
+            int panelId = panels[random.nextInt(panels.length)].getId();
+            int[] colorRGB = {color.getRed(), color.getGreen(), color.getBlue()};
+            java.awt.Color darkerColor = new java.awt.Color(colorRGB[0], colorRGB[1], colorRGB[2]).darker().darker().darker();
+            CustomEffectBuilder ceb = new CustomEffectBuilder(device);
+            ceb.addFrameToAllPanels(new Frame(darkerColor.getRed(),
+                    darkerColor.getGreen(), darkerColor.getBlue(), 0, 2));
+            ceb.addFrame(panelId, new Frame(colorRGB[0], colorRGB[1], colorRGB[2], 0, 1));
+
+
+            new Thread(() -> {
+                try {
+                    device.effects().displayEffect(ceb.build("", false));
+                } catch (StatusCodeException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+
+
+        }
+    }
+
+    public void setNeighbors(Panel panel, final List<Integer> marked,
+                             Panel[] panels, CustomEffectBuilder ceb, java.awt.Color color,
+                             int time) {
+        for (Panel p : panel.getNeighbors(panels)) {
+            if (!marked.contains(p.getId())) {
+                ceb.addFrame(p, new Frame(color.getRed(),
+                        color.getGreen(), color.getBlue(), 0, 3));
+                //ceb.addFrame(p, new Frame(0, 0, 0, 0, 2));
+                marked.add(p.getId());
+                setNeighbors(p, marked, panels, ceb, color, time);
+            }
+        }
     }
 
     @Override
@@ -99,42 +158,6 @@ public class FireworkEffect implements MusicEffect {
         palette = colors;
     }
 
-
-    public void run(SpecificAudioAnalysis analysis) throws StatusCodeException {
-        if (analysis.getBeat() != null && palette.length > 0) {
-            Color color = palette[paletteIndex];
-            int[] colorRGB = {color.getRed(), color.getGreen(), color.getBlue()};
-            int originPanelIndex = random.nextInt(panels.length);
-            int panelID = panels[originPanelIndex].getId();
-            Panel[] neighbors = panels[originPanelIndex].getNeighbors(panels);
-            int fireworkLength = random.nextInt(neighbors.length + 1);
-            CustomEffectBuilder ceb = new CustomEffectBuilder(device);
-            Frame toColor = new Frame(colorRGB[0], colorRGB[1], colorRGB[2], 0, 1);
-            Frame toBlack = new Frame(0, 0, 0, 0, 5);
-            if (songChanged) {
-                songChanged = false;
-                ceb.addFrameToAllPanels(new Frame(0, 0, 0, 0, 1));
-            }
-            ceb.addFrame(panelID, toColor);
-            for (int i = 0; i < fireworkLength; i++) {
-                ceb.addFrame(neighbors[i].getId(), toColor);
-            }
-            ceb.addFrame(panelID, toBlack);
-            for (int i = 0; i < fireworkLength; i++) {
-                ceb.addFrame(neighbors[i].getId(), toBlack);
-            }
-            new Thread(() -> {
-                try {
-                    device.effects().displayEffect(ceb.build("", false));
-                } catch (StatusCodeException e) {
-                    e.printStackTrace();
-                }
-            }).start();
-
-            setNextPaletteColor();
-        }
-    }
-
     protected void setNextPaletteColor() {
         if (paletteIndex == palette.length - 1) {
             paletteIndex = 0;
@@ -143,8 +166,4 @@ public class FireworkEffect implements MusicEffect {
         }
     }
 
-    @Override
-    public void setSongChanged() {
-        songChanged = true;
-    }
 }
