@@ -5,7 +5,6 @@
 
 package dev.jaxcksn.nanoleafMusic.effects;
 
-import dev.jaxcksn.nanoleafMusic.utility.PaletteColor;
 import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
 import io.github.rowak.nanoleafapi.*;
 import io.github.rowak.nanoleafapi.effectbuilder.CustomEffectBuilder;
@@ -15,11 +14,12 @@ import java.util.Random;
 public class FireworkEffect implements MusicEffect {
     public Color[] palette;
     public Aurora device;
-    public PaletteColor accentColor = new PaletteColor("#0FD95F");
     private Panel[] panels;
     private final Random random;
     public boolean albumMode = false;
     private int paletteIndex = 0;
+    public final EffectType effectType = EffectType.FIREWORKS;
+    public boolean songChanged = false;
 
     public FireworkEffect(Color[] palette, Aurora device) {
         this.palette = palette;
@@ -31,6 +31,11 @@ public class FireworkEffect implements MusicEffect {
         }
         this.random = new Random();
 
+    }
+
+    @Override
+    public Color[] getPalette() {
+        return palette;
     }
 
     private int[] adjustLuma(int[] color, double brightness) {
@@ -51,6 +56,7 @@ public class FireworkEffect implements MusicEffect {
             return new int[]{r, g, b};
         }
     }
+
 
     public void setPalette(int[][] colors) {
         if (!albumMode) {
@@ -78,6 +84,7 @@ public class FireworkEffect implements MusicEffect {
         }
 
         palette = newPalette;
+
         /* Disabling this feature until I can prefect it.
         int betterColor = 0;
         int[] color0 = {newPalette[0].getRed(), newPalette[0].getGreen(), newPalette[0].getBlue()};
@@ -93,6 +100,10 @@ public class FireworkEffect implements MusicEffect {
         }
         accentColor = new PaletteColor(javafx.scene.paint.Color.rgb(newPalette[betterColor].getRed(), newPalette[betterColor].getGreen(), newPalette[betterColor].getBlue()));
         */
+    }
+
+    public EffectType getEffectType() {
+        return effectType;
     }
 
     //If the palette is manually set
@@ -116,6 +127,10 @@ public class FireworkEffect implements MusicEffect {
             CustomEffectBuilder ceb = new CustomEffectBuilder(device);
             Frame toColor = new Frame(colorRGB[0], colorRGB[1], colorRGB[2], 0, 1);
             Frame toBlack = new Frame(0, 0, 0, 0, 5);
+            if (songChanged) {
+                songChanged = false;
+                ceb.addFrameToAllPanels(new Frame(0, 0, 0, 0, 1));
+            }
             ceb.addFrame(panelID, toColor);
             for (int i = 0; i < fireworkLength; i++) {
                 ceb.addFrame(neighbors[i].getId(), toColor);
@@ -124,7 +139,6 @@ public class FireworkEffect implements MusicEffect {
             for (int i = 0; i < fireworkLength; i++) {
                 ceb.addFrame(neighbors[i].getId(), toBlack);
             }
-
             new Thread(() -> {
                 try {
                     device.effects().displayEffect(ceb.build("", false));
@@ -132,6 +146,7 @@ public class FireworkEffect implements MusicEffect {
                     e.printStackTrace();
                 }
             }).start();
+
             setNextPaletteColor();
         }
     }
@@ -142,5 +157,10 @@ public class FireworkEffect implements MusicEffect {
         } else {
             paletteIndex++;
         }
+    }
+
+    @Override
+    public void setSongChanged() {
+        songChanged = true;
     }
 }

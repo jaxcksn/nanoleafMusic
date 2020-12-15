@@ -6,6 +6,7 @@
 package dev.jaxcksn.nanoleafMusic;
 
 import com.github.kevinsawicki.http.HttpRequest;
+import dev.jaxcksn.nanoleafMusic.effects.EffectType;
 import dev.jaxcksn.nanoleafMusic.utility.DataManagerException;
 import dev.jaxcksn.nanoleafMusic.utility.Settings;
 import dev.jaxcksn.nanoleafMusic.utility.dMEC;
@@ -77,16 +78,18 @@ public class DataManager {
         int albumPaletteLength = preferences.getInt("numberOfAlbumColors",6);
         if(albumPaletteLength > 12) {
             albumPaletteLength = 12;
-        } else if (albumPaletteLength < 3){
+        } else if (albumPaletteLength < 3) {
             albumPaletteLength = 3;
         }
-        String colorPalette = preferences.get("colorPalette","#FF0000,#00FF00,#0000FF");
-        if(colorPalette.length() > 95) {
-            colorPalette = colorPalette.substring(0,95);
-        } else if ( colorPalette.length() < 23) {
-            colorPalette="#FF0000,#00FF00,#0000FF";
+        String colorPalette = preferences.get("colorPalette", "#FF0000,#00FF00,#0000FF");
+        if (colorPalette.length() > 95) {
+            colorPalette = colorPalette.substring(0, 95);
+        } else if (colorPalette.length() < 23) {
+            colorPalette = "#FF0000,#00FF00,#0000FF";
         }
-        return new Settings(albumColors,albumPaletteLength,colorPalette);
+        String effectString = preferences.get("selectedEffect", "PULSEBEAT");
+        EffectType activeEffectType = EffectType.valueOf(effectString);
+        return new Settings(albumColors, albumPaletteLength, colorPalette, activeEffectType);
     }
 
     public static void updateSettings(Settings settings) {
@@ -96,6 +99,10 @@ public class DataManager {
 
     public static void changeAlbumMode(boolean b) {
         preferences.putBoolean("useAlbumColors", b);
+    }
+
+    public static void changeEffectType(EffectType effectType) {
+        preferences.put("selectedEffect", effectType.toString());
     }
 
     public static void clearSavedData() {

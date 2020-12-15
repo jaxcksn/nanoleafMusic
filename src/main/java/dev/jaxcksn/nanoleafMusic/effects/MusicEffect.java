@@ -15,4 +15,10 @@ public interface MusicEffect {
     void setPalette(Color[] palette);
 
     void setPalette(int[][] palette);
+
+    Color[] getPalette();
+
+    EffectType getEffectType();
+
+    void setSongChanged();
 }
