@@ -174,7 +174,7 @@ public class PlaybackView {
     public void showAbout(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText("About this Program");
-        alert.setContentText("NanoleafMusic v1.0.0 \nCopyright (c) 2020, Jaxcksn. All rights reserved.");
+        alert.setContentText("NanoleafMusic v1.1-b \nCopyright (c) 2020, Jaxcksn.\nAll rights reserved.");
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.setMinHeight(Region.USE_PREF_SIZE);
         dialogPane.getStylesheets().add("/gui.css");
