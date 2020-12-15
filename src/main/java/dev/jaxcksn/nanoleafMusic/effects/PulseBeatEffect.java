@@ -3,9 +3,10 @@
  * All rights reserved.
  */
 
-package dev.jaxcksn.nanoleafMusic.utility;
+package dev.jaxcksn.nanoleafMusic.effects;
 
 import com.wrapper.spotify.model_objects.miscellaneous.AudioAnalysisSegment;
+import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
 import io.github.rowak.nanoleafapi.*;
 import io.github.rowak.nanoleafapi.effectbuilder.CustomEffectBuilder;
 
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class PulseBeat {
+public class PulseBeatEffect implements MusicEffect {
     private static class SpotifyEffectUtils {
         public static float getLoudness(float previousLoudness, SpecificAudioAnalysis analysis) {
             AudioAnalysisSegment segment = analysis.getSegment();
@@ -44,9 +45,9 @@ public class PulseBeat {
     private Panel[] panels;
     private int paletteIndex = 0;
     public boolean albumMode = false;
-    public PaletteColor accentColor = new PaletteColor("#0FD95F");
+    public final EffectType effectType = EffectType.PULSEBEAT;
 
-    public PulseBeat(Color[] palette, Aurora aurora) {
+    public PulseBeatEffect(Color[] palette, Aurora aurora) {
         this.palette = palette;
         this.aurora = aurora;
         try {
@@ -56,6 +57,20 @@ public class PulseBeat {
         }
         random = new Random();
         System.out.println("\u001b[92;1m✔\u001b[0m Pulse Beat Loaded");
+    }
+
+    @Override
+    public EffectType getEffectType() {
+        return effectType;
+    }
+
+    @Override
+    public void setSongChanged() {
+        //DO NOTHING.
+    }
+
+    public Color[] getPalette() {
+        return palette;
     }
 
     private int[] adjustLuma(int[] color, double brightness) {
@@ -103,56 +118,6 @@ public class PulseBeat {
         }
 
         palette = newPalette;
-        /* Disabling this feature until I can prefect it.
-        int betterColor = 0;
-        int[] color0 = {newPalette[0].getRed(), newPalette[0].getGreen(), newPalette[0].getBlue()};
-        int[] color1 = {newPalette[1].getRed(), newPalette[1].getGreen(), newPalette[1].getBlue()};
-        int[] color2 = {newPalette[2].getRed(), newPalette[2].getGreen(), newPalette[2].getBlue()};
-        double color1Colorfulness = calculateColorful(color1);
-        if (color1Colorfulness >= calculateColorful(color0)) {
-            if (calculateColorful(color2) >= color1Colorfulness) {
-                betterColor = 2;
-            } else {
-                betterColor = 1;
-            }
-        }
-        accentColor = new PaletteColor(javafx.scene.paint.Color.rgb(newPalette[betterColor].getRed(), newPalette[betterColor].getGreen(), newPalette[betterColor].getBlue()));
-        */
-    }
-
-
-    private static double calculateColorful(int[] rgb) {
-        double maxValue = largest(rgb);
-        double minValue = smallest(rgb);
-        return ((maxValue + minValue) * (maxValue - minValue)) / maxValue;
-    }
-
-    private static int largest(int[] colors) {
-        int i;
-        // Initialize maximum element
-        int max = colors[0];
-        // Traverse array elements from second and
-        // compare every element with current max
-        for (i = 1; i < colors.length; i++) {
-            if (colors[i] > max) {
-                max = colors[i];
-            }
-        }
-        return max;
-    }
-
-    private static int smallest(int[] colors) {
-        int i;
-        // Initialize maximum element
-        int min = colors[0];
-        // Traverse array elements from second and
-        // compare every element with current max
-        for (i = 1; i < colors.length; i++) {
-            if (colors[i] < min) {
-                min = colors[i];
-            }
-        }
-        return min;
     }
 
     //If the palette is manually set
@@ -176,8 +141,7 @@ public class PulseBeat {
             original = applyLoudnessToColor(original);
             java.awt.Color darker = original.darker().darker().darker();
             CustomEffectBuilder ceb = new CustomEffectBuilder(aurora);
-            ceb.addFrame(panelId, new Frame(original.getRed(),
-                    original.getGreen(), original.getBlue(), 0, 1));
+            ceb.addFrame(panelId, new Frame(original.getRed(), original.getGreen(), original.getBlue(), 0, 1));
             ceb.addFrame(panelId, new Frame(0, 0, 0, 0, 5));
             List<Integer> marked = new ArrayList<>();
             marked.add(panelId);

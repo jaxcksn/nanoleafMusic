@@ -117,7 +117,7 @@ public class PalettePicker {
         effectManager.settings.colorPalette = colorString.toString();
         new Thread(() -> DataManager.updateSettings(effectManager.settings)).start();
         effectManager.palette = PaletteColor.toEffectColorArray(colorString.toString());
-        effectManager.pulseBeat.setPalette(effectManager.palette);
+        effectManager.activeEffect.setPalette(effectManager.palette);
         ((Stage) saveBtn.getScene().getWindow()).close();
     }
 

@@ -32,6 +32,17 @@ public class PaletteColor {
                 Integer.valueOf(hexCode.substring(5, 7), 16));
     }
 
+    public PaletteColor(io.github.rowak.nanoleafapi.Color color) {
+        hexCode = "#" + (hexFormat(color.getRed()) + hexFormat(color.getGreen()) + hexFormat(color.getBlue()))
+                .toUpperCase();
+        jfxColor = Color.web(hexCode);
+        effectColor = color;
+    }
+
+    public int[] toRGB() {
+        return new int[]{effectColor.getRed(), effectColor.getGreen(), effectColor.getBlue()};
+    }
+
     public static ObservableList<PaletteColor> toPaletteList(String colorValues) {
         String[] colors = colorValues.split(",", (int) Math.ceil((double) colorValues.length() / 8));
         ObservableList<PaletteColor> colorList = FXCollections.observableArrayList();

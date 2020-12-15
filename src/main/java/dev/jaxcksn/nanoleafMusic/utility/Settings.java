@@ -5,6 +5,8 @@
 
 package dev.jaxcksn.nanoleafMusic.utility;
 
+import dev.jaxcksn.nanoleafMusic.effects.EffectType;
+
 public class Settings {
     public boolean albumColors;
     /**
@@ -13,9 +15,10 @@ public class Settings {
      */
     public int albumPaletteLength;
     public String colorPalette;
+    public EffectType activeEffectType;
 
-    public Settings(boolean albumColors, int albumPaletteLength, String colorPalette) {
-
+    public Settings(boolean albumColors, int albumPaletteLength, String colorPalette, EffectType activeEffectType) {
+        this.activeEffectType = activeEffectType;
         this.albumColors = albumColors;
         this.albumPaletteLength = albumPaletteLength;
         this.colorPalette = colorPalette;

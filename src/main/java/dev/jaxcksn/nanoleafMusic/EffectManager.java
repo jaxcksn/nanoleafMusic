@@ -18,8 +18,11 @@ import com.wrapper.spotify.requests.data.player.GetUsersCurrentlyPlayingTrackReq
 import com.wrapper.spotify.requests.data.tracks.GetAudioAnalysisForTrackRequest;
 import de.androidpit.colorthief.ColorThief;
 import dev.jaxcksn.nanoleafMusic.controllers.PlaybackView;
+import dev.jaxcksn.nanoleafMusic.effects.EffectType;
+import dev.jaxcksn.nanoleafMusic.effects.FireworkEffect;
+import dev.jaxcksn.nanoleafMusic.effects.MusicEffect;
+import dev.jaxcksn.nanoleafMusic.effects.PulseBeatEffect;
 import dev.jaxcksn.nanoleafMusic.utility.PaletteColor;
-import dev.jaxcksn.nanoleafMusic.utility.PulseBeat;
 import dev.jaxcksn.nanoleafMusic.utility.Settings;
 import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
 import io.github.rowak.nanoleafapi.Aurora;
@@ -49,11 +52,11 @@ public class EffectManager {
     private int expiresIn;
     public Aurora device;
     private final PlaybackView viewController;
-    public PulseBeat pulseBeat;
-    private final PaletteColor defaultAccent = new PaletteColor("#0FD95F");
+    public MusicEffect activeEffect;
 
     //--- Effect Variables
-    private boolean isRunning, isPlaying = false;
+    private boolean isRunning;
+    public boolean isPlaying = false;
     private Track currentTrack;
     private AudioAnalysis currentTrackAnalysis;
     private int progress;
@@ -67,11 +70,35 @@ public class EffectManager {
         this.expiresIn = expiresIn;
         this.device = device;
         this.viewController = viewController;
-        this.pulseBeat = new PulseBeat(palette, device);
+
         settings = DataManager.loadSettings();
+        switch (settings.activeEffectType) {
+            case FIREWORKS:
+                this.activeEffect = new FireworkEffect(palette, device);
+                break;
+            case PULSEBEAT:
+                this.activeEffect = new PulseBeatEffect(palette, device);
+                break;
+        }
+
         System.out.println("\u001b[92;1m✔\u001b[0m Effect Manager Loaded");
         startRefreshTimer();
     }
+
+    public void switchEffect(EffectType effectType) {
+        System.out.println("\u001b[96;1mℹ\u001b[0m Changing Effect");
+        settings.activeEffectType = effectType;
+        Color[] currentPalette = activeEffect.getPalette();
+        switch (effectType) {
+            case FIREWORKS:
+                this.activeEffect = new FireworkEffect(currentPalette, device);
+                break;
+            case PULSEBEAT:
+                this.activeEffect = new PulseBeatEffect(currentPalette, device);
+                break;
+        }
+    }
+
 
     public void reloadEffect() {
         System.out.println("\n" + "\u001b[96;1mℹ\u001b[0m Attempting to Restart Effect");
@@ -85,7 +112,7 @@ public class EffectManager {
                 if (settings.albumColors) {
                     displayTrackInformation(false, false);
                 } else {
-                    pulseBeat.setPalette(palette);
+                    activeEffect.setPalette(palette);
                 }
                 this.startEffect();
                 System.out.println("\u001b[92;1m✔\u001b[0m Finished Restarting Effect\n");
@@ -131,7 +158,7 @@ public class EffectManager {
                 if (isPlaying) {
                     try {
                         pulseTask();
-                    } catch (StatusCodeException e) {
+                    } catch (StatusCodeException | IOException e) {
                         e.printStackTrace();
                     }
                 }
@@ -223,10 +250,12 @@ public class EffectManager {
     }
     // ---
 
-    private void pulseTask() throws StatusCodeException {
-        SpecificAudioAnalysis analysis = SpecificAudioAnalysis.getAnalysis(currentTrackAnalysis,progress,100);
-        pulseBeat.run(analysis);
-        progress += 100;
+    private void pulseTask() throws StatusCodeException, IOException {
+        if (isPlaying) {
+            SpecificAudioAnalysis analysis = SpecificAudioAnalysis.getAnalysis(currentTrackAnalysis, progress, 100);
+            activeEffect.run(analysis);
+            progress += 100;
+        }
     }
 
     private void spotifyTask() throws ParseException, SpotifyWebApiException, IOException, InterruptedException {
@@ -277,9 +306,10 @@ public class EffectManager {
 
     }
 
-    private void displayTrackInformation(boolean updateArt, boolean isPaused) {
+    public void displayTrackInformation(boolean updateArt, boolean isPaused) {
         if (!settings.albumColors) {
             if (updateArt) {
+                activeEffect.setSongChanged();
                 Image[] artwork = currentTrack.getAlbum().getImages();
                 artworkURL = artwork[1].getUrl();
             }
@@ -287,12 +317,13 @@ public class EffectManager {
             ArtistSimplified[] songArtists = currentTrack.getArtists();
 
             new Thread(() -> {
-                pulseBeat.setPalette(palette);
-                viewController.setPlayback(currentTrack.getName(), songArtists, artworkURL, defaultAccent);
+                activeEffect.setPalette(palette);
+                viewController.setPlayback(currentTrack.getName(), songArtists, artworkURL);
             }).start();
         } else {
             if (isPlaying) {
                 if (updateArt) {
+                    activeEffect.setSongChanged();
                     Image[] artwork = currentTrack.getAlbum().getImages();
                     artworkURL = artwork[1].getUrl();
                 }
@@ -302,11 +333,11 @@ public class EffectManager {
                     try {
                         BufferedImage image = ImageIO.read(new URL(artworkURL));
                         int[][] colorArray = ColorThief.getPalette(image, 6);
-                        pulseBeat.setPalette(colorArray);
+                        activeEffect.setPalette(colorArray);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    viewController.setPlayback(currentTrack.getName(), songArtists, artworkURL, pulseBeat.accentColor);
+                    viewController.setPlayback(currentTrack.getName(), songArtists, artworkURL);
                 }).start();
             } else {
                 viewController.setPlayback(isPaused);
