@@ -252,7 +252,7 @@ public class ConnectToDevice {
             Aurora connectedDevice = new Aurora(metadata.getHostName(),metadata.getPort(),"v1",accessToken);
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setHeaderText("Save device for quick reconnect?");
-            alert.setContentText("You can save the device and access token to quickly reconnect last time. Saving this device will overwrite any previous saved devices.");
+            alert.setContentText("You can opt to save this device and access token to quickly reconnect next time. Saving this device will overwrite any previous saved devices.");
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.setMinHeight(Region.USE_PREF_SIZE);
             dialogPane.getStylesheets().add("/gui.css");
