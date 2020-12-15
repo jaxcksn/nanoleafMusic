@@ -67,7 +67,7 @@ To add a color to the palette, use the color selection dropdown, and then press 
 
 ##### Switching the Effect
 <p align="center">
-  <img align="center" width="500" src="./assets/step4.png"/>
+  <img align="center" width="440" src="./assets/step4.png"/>
 </p>
 
 To change the effect, open the setting drop down, and move your mouse over the 'Choose Effect' option and another menu, with the [available effects](#available-effects) should appear. Your current effect will appear above the 'Now Playing' label in the playback view.
@@ -101,18 +101,7 @@ To change the effect, open the setting drop down, and move your mouse over the '
 
 ## Future Goals
 
-For future releases, here is my list of some of my goals ordered by priority:
-
-#### v1.0:
-- [X] Refactoring and Improving Performance
-- [X] Redo of the Color Palette UI
-- [X] UI Overhaul
-
-#### v1.5:
-- [ ] Adding Java Documentation to Source Code
-- [ ] Adding a Firework Effect
-- [ ] Adding Player Controls to UI
-
+All of my future goals for releases are in the project section of this repository, and you can keep track of the progress of them. If you have any suggestions for features, you can open an issue and I'll look into it.
 
 ## Credits
 
