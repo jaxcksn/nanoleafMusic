@@ -5,7 +5,6 @@
   ~ All rights reserved.
   -->
 
-
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -49,6 +48,8 @@
                               </RadioMenuItem>
                               <RadioMenuItem fx:id="FireworksToggle" mnemonicParsing="false" text="Fireworks"
                                              toggleGroup="$effectRadio"/>
+                              <RadioMenuItem fx:id="VibeToggle" mnemonicParsing="false" toggleGroup="$effectRadio"
+                                             text="Vibe"/>
                            </items>
                         </Menu>
                         <CheckMenuItem fx:id="albumColorsCheckbox" mnemonicParsing="false" selected="true"

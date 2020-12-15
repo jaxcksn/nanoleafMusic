@@ -65,6 +65,13 @@ The effect has two different ways to set the colors, **album art** and **color p
 
 To add a color to the palette, use the color selection dropdown, and then press the _Add Color_ button to add it to the list. To remove a color from the palette, select the color in the list, then press the remove button. Finally, press the save button to apply your changes and update the colors. To go back to album art mode, open the settings drop down and enable it again. When you exit the program, both your color palette and color made will be saved for next time. 
 
+##### Switching the Effect
+<p align="center">
+  <img align="center" width="500" src="./assets/step4.png"/>
+</p>
+
+To change the effect, open the setting drop down, and move your mouse over the 'Choose Effect' option and another menu, with the [available effects](#available-effects) should appear. Your current effect will appear above the 'Now Playing' label in the playback view.
+
 
 ## Troubleshooting
 
@@ -87,7 +94,10 @@ To add a color to the palette, use the color selection dropdown, and then press 
   * It can take a moment for the program to notice the song has changed, but once you see it change on the program, it should be reflected on the device.
   * If it still doesn't respond, in the settings menu there is a _reload effect_ button. Press that to restart the effect. If it doesn't work, I recommend restarting the program.
 
-
+## Available Effects:
+- Pulse Beat: The classic and original effect. Creates a ripple that pulses out from a random panel on every beat.
+- Fireworks: Lights up a random group of panels on every beat, like distant fireworks. 
+- Vibe: More minimal and bright, on every beat the color of a random panel gets brighter, and every bar the color changes.
 
 ## Future Goals
 
