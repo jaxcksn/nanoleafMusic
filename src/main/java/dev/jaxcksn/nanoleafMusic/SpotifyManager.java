@@ -45,7 +45,7 @@ public class SpotifyManager {
         try {
             pkceVerification = PKCE.generateCodeVerifier();
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
 
         AuthorizationCodeUriRequest authorizationCodeUriRequest = null;
@@ -54,7 +54,7 @@ public class SpotifyManager {
                     .scope("user-read-currently-playing, user-read-playback-state")
                     .build();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
         assert authorizationCodeUriRequest != null;
         connectURI = authorizationCodeUriRequest.execute();
@@ -71,7 +71,7 @@ public class SpotifyManager {
             spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
             expiresIn = authorizationCodeCredentials.getExpiresIn();
         } catch (ParseException | IOException e) {
-            e.printStackTrace();
+            Main.showException(e);
         } catch (SpotifyWebApiException spotifyWebApiException) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Exception");

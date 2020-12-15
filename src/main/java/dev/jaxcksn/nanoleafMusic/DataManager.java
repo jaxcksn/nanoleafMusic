@@ -109,7 +109,7 @@ public class DataManager {
         try {
             preferences.clear();
         } catch (BackingStoreException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
     }
 

@@ -8,6 +8,7 @@ package dev.jaxcksn.nanoleafMusic.utility;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import dev.jaxcksn.nanoleafMusic.Main;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -136,7 +137,7 @@ public class CallbackServer {
             try {
                 tokenLatch.await();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Main.showException(e);
             }
             return authCode;
         }
@@ -153,7 +154,7 @@ public class CallbackServer {
             server.setExecutor(threadPoolExecutor);
             server.start();
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
 
     }

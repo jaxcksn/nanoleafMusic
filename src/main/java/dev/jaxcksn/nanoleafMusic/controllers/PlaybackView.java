@@ -115,7 +115,7 @@ public class PlaybackView {
             palettePickerScene = new Scene(palettePickerRoot, 400, 300);
             palettePickerScene.getStylesheets().add("/gui.css");
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
     }
 

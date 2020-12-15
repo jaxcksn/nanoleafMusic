@@ -6,6 +6,7 @@
 package dev.jaxcksn.nanoleafMusic.effects;
 
 import com.wrapper.spotify.model_objects.miscellaneous.AudioAnalysisSegment;
+import dev.jaxcksn.nanoleafMusic.Main;
 import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
 import io.github.rowak.nanoleafapi.*;
 import io.github.rowak.nanoleafapi.effectbuilder.CustomEffectBuilder;
@@ -53,7 +54,7 @@ public class PulseBeatEffect implements MusicEffect {
         try {
             this.panels = aurora.panelLayout().getPanels();
         } catch (StatusCodeException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
         random = new Random();
         System.out.println("\u001b[92;1m✔\u001b[0m Pulse Beat Loaded");
@@ -153,7 +154,7 @@ public class PulseBeatEffect implements MusicEffect {
                 try {
                     aurora.effects().displayEffect(ceb.build("", false));
                 } catch (StatusCodeException sce) {
-                    sce.printStackTrace();
+                    Main.showException(sce);
                 }
             }).start();
             setNextPaletteColor();

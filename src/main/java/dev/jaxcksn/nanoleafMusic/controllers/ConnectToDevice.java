@@ -100,7 +100,7 @@ public class ConnectToDevice {
                 }
             }));
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
 
         return auroras;
@@ -151,7 +151,7 @@ public class ConnectToDevice {
                 deviceList.add(aurora.getDeviceName());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
         setLoading(false);
     }
@@ -273,7 +273,7 @@ public class ConnectToDevice {
             alert.showAndWait();
             setLoading(false);
         } catch (StatusCodeException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
     }
 
@@ -289,7 +289,7 @@ public class ConnectToDevice {
             stage.setScene(scene);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
 
     }

@@ -130,7 +130,7 @@ public class EffectManager {
                 System.out.println("\u001b[92;1m✔\u001b[0m Finished Restarting Effect\n");
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
 
 
@@ -147,7 +147,7 @@ public class EffectManager {
                 spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
                 expiresIn = authorizationCodeCredentials.getExpiresIn();
             } catch (ParseException | IOException e) {
-                e.printStackTrace();
+                Main.showException(e);
             } catch (SpotifyWebApiException spotifyWebApiException) {
                 showSWAE(spotifyWebApiException);
             }
@@ -171,7 +171,7 @@ public class EffectManager {
                     try {
                         pulseTask();
                     } catch (StatusCodeException | IOException e) {
-                        e.printStackTrace();
+                        Main.showException(e);
                     }
                 }
             };
@@ -180,7 +180,7 @@ public class EffectManager {
                 try {
                     spotifyTask();
                 } catch (ParseException | IOException | InterruptedException e) {
-                    e.printStackTrace();
+                    Main.showException(e);
                 } catch (SpotifyWebApiException spotifyWebApiException) {
                     showSWAE(spotifyWebApiException);
                 }
@@ -193,7 +193,7 @@ public class EffectManager {
             try {
                 initThread.join();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Main.showException(e);
             }
 
             sES.scheduleAtFixedRate(effectPulseTask, 0, 100, TimeUnit.MILLISECONDS);
@@ -221,7 +221,7 @@ public class EffectManager {
             isPlaying = true;
             System.out.println("\u001b[92;1m✔\u001b[0m Finished initialization");
         } catch (ParseException | IOException | InterruptedException e) {
-            e.printStackTrace();
+            Main.showException(e);
         } catch (SpotifyWebApiException spotifyWebApiException) {
             showSWAE(spotifyWebApiException);
         }
@@ -285,7 +285,7 @@ public class EffectManager {
                     }
                     playLatch.countDown();
                 } catch (ParseException | IOException | InterruptedException e) {
-                    e.printStackTrace();
+                    Main.showException(e);
                 } catch (SpotifyWebApiException spotifyWebApiException) {
                     showSWAE(spotifyWebApiException);
                 }
@@ -347,7 +347,7 @@ public class EffectManager {
                         int[][] colorArray = ColorThief.getPalette(image, 6);
                         activeEffect.setPalette(colorArray);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Main.showException(e);
                     }
                     viewController.setPlayback(currentTrack.getName(), songArtists, artworkURL);
                 }).start();

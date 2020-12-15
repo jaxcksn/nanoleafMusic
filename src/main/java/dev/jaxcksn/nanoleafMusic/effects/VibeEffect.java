@@ -6,6 +6,7 @@
 package dev.jaxcksn.nanoleafMusic.effects;
 
 import com.wrapper.spotify.model_objects.miscellaneous.AudioAnalysisMeasure;
+import dev.jaxcksn.nanoleafMusic.Main;
 import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
 import io.github.rowak.nanoleafapi.*;
 import io.github.rowak.nanoleafapi.effectbuilder.CustomEffectBuilder;
@@ -34,7 +35,7 @@ public class VibeEffect implements MusicEffect {
         try {
             this.panels = device.panelLayout().getPanels();
         } catch (StatusCodeException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
         this.random = new Random();
         paletteIndex = random.nextInt(palette.length);
@@ -70,7 +71,7 @@ public class VibeEffect implements MusicEffect {
                 try {
                     device.effects().displayEffect(ceb.build("", false));
                 } catch (StatusCodeException e) {
-                    e.printStackTrace();
+                    Main.showException(e);
                 }
             }).start();
 

@@ -56,7 +56,7 @@ public class ConnectToSpotify {
                 spotifyManager.cbServer.destroy();
                 transitionToPlayer();
             } catch (IOException e) {
-                e.printStackTrace();
+                Main.showException(e);
             }
         }
     }
@@ -79,7 +79,7 @@ public class ConnectToSpotify {
 
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
     }
 
