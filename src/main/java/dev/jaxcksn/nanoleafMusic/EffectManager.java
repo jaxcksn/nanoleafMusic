@@ -5,6 +5,7 @@
 
 package dev.jaxcksn.nanoleafMusic;
 
+import ch.qos.logback.classic.Logger;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
@@ -26,13 +27,12 @@ import io.github.rowak.nanoleafapi.Aurora;
 import io.github.rowak.nanoleafapi.Color;
 import io.github.rowak.nanoleafapi.StatusCodeException;
 import javafx.scene.control.Alert;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import org.apache.hc.core5.http.ParseException;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -40,7 +40,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -63,13 +62,14 @@ public class EffectManager {
     public Settings settings;
     public Color[] palette = new Color[]{Color.RED, Color.BLUE, Color.GREEN};
     private ScheduledExecutorService sES;
+    private static final Logger logger
+            = (Logger) LoggerFactory.getLogger("nanoleafMusic.EffectManager");
 
     public EffectManager(SpotifyApi spotifyApi, int expiresIn, Aurora device, PlaybackView viewController) {
         this.spotifyApi = spotifyApi;
         this.expiresIn = expiresIn;
         this.device = device;
         this.viewController = viewController;
-
         settings = DataManager.loadSettings();
         switch (settings.activeEffectType) {
             case FIREWORKS:
@@ -83,12 +83,11 @@ public class EffectManager {
                 break;
         }
 
-        System.out.println("\u001b[92;1m✔\u001b[0m Effect Manager Loaded");
+        logger.info("Effect manager object initialized, starting refresh timer");
         startRefreshTimer();
     }
 
     public void switchEffect(EffectType effectType) {
-        System.out.println("\u001b[96;1mℹ\u001b[0m Changing Effect");
         settings.activeEffectType = effectType;
         Color[] currentPalette = activeEffect.getPalette();
         switch (effectType) {
@@ -106,18 +105,13 @@ public class EffectManager {
 
 
     public void reloadEffect() {
-        System.out.println("\n" + "\u001b[96;1mℹ\u001b[0m Attempting to Restart Effect");
+        logger.info("Reloading Effect...");
+        dumpEffect();
+        logger.warn("Attempting to shut down the Scheduled Executor Service. If this fails, the program can't recover.");
         sES.shutdownNow();
         try {
-            if (!sES.awaitTermination(30, TimeUnit.SECONDS)) {
-                System.err.println("Pool did not terminate");
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setHeaderText("Error Reloading Effect");
-                alert.setContentText("There was issue stopping the scheduled executor tasks, and the program needs to be restarted.");
-                DialogPane dialogPane = alert.getDialogPane();
-                dialogPane.setMinHeight(Region.USE_PREF_SIZE);
-                dialogPane.getStylesheets().add("/gui.css");
-                alert.showAndWait();
+            if (!sES.awaitTermination(60, TimeUnit.SECONDS)) {
+                throw new Exception("Scheduled Executor Service failed to shutdown");
             } else {
                 isPlaying = false;
                 isRunning = false;
@@ -127,13 +121,26 @@ public class EffectManager {
                     activeEffect.setPalette(palette);
                 }
                 this.startEffect();
-                System.out.println("\u001b[92;1m✔\u001b[0m Finished Restarting Effect\n");
+                logger.info("Finished reloading the effect");
             }
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             Main.showException(e);
+            System.exit(1);
         }
 
 
+    }
+
+    private void dumpEffect() {
+        try {
+            logger.info("Device Effect Data: {}", device.effects().getCurrentEffect().getAnimData());
+            logger.info("Is Playing: {}", isPlaying);
+            logger.info("Current Track: {}", currentTrack.getName());
+            logger.info("Effect Type: {}", activeEffect.getEffectType());
+            logger.info("Palette: {}", (Object[]) activeEffect.getPalette());
+        } catch (StatusCodeException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -163,9 +170,9 @@ public class EffectManager {
             if (!settings.albumColors) {
                 palette = PaletteColor.toEffectColorArray(settings.colorPalette);
             }
-
-            sES = Executors.newScheduledThreadPool(4 * Runtime.getRuntime().availableProcessors());
-            System.out.println("\u001b[96;1mℹ\u001b[0m Using " + 4 * Runtime.getRuntime().availableProcessors() + " threads.");
+            int availableProcessors = Runtime.getRuntime().availableProcessors();
+            sES = Executors.newScheduledThreadPool(4 * availableProcessors, new Main.NamedThreadFactory("effect"));
+            logger.info("There are {} cores available, using a thread pool of {} threads", availableProcessors, 4 * availableProcessors);
             Runnable effectPulseTask = () -> {
                 if (isPlaying) {
                     try {
@@ -188,8 +195,8 @@ public class EffectManager {
 
             //Prevents UI From Freezing Up when Nothing is Playing
             Thread initThread = new Thread(this::initEffect);
+            initThread.setName("effect-init");
             initThread.start();
-            System.out.println("\u001b[92;1m✔\u001b[0m Starting Initialization");
             try {
                 initThread.join();
             } catch (InterruptedException e) {
@@ -197,9 +204,9 @@ public class EffectManager {
             }
 
             sES.scheduleAtFixedRate(effectPulseTask, 0, 100, TimeUnit.MILLISECONDS);
-            System.out.println("\u001b[92;1m✔\u001b[0m Pulse Timers Started");
+            logger.info("Effect timer was scheduled");
             sES.scheduleAtFixedRate(spotifyUpdateTask, 0, 2000, TimeUnit.MILLISECONDS);
-            System.out.println("\u001b[92;1m✔\u001b[0m Spotify Update Timers Started");
+            logger.info("Spotify Poll timer was scheduled");
             displayTrackInformation(true, false);
         }
     }
@@ -208,7 +215,7 @@ public class EffectManager {
         try {
             CurrentlyPlaying currentlyPlaying = getCurrentlyPlaying();
             if (currentlyPlaying == null) {
-                System.out.println("\u001b[96;1mℹ\u001b[0m Current Playback returned null, starting wait loop.");
+                logger.warn("Nothing is playing on Spotify, polling again in 5 seconds.");
             }
             while (currentlyPlaying == null && !isPlaying) {
                 TimeUnit.SECONDS.sleep(5);
@@ -219,7 +226,7 @@ public class EffectManager {
             currentTrackAnalysis = getTrackAnalysis(currentTrack.getId());
             progress = currentlyPlaying.getProgress_ms();
             isPlaying = true;
-            System.out.println("\u001b[92;1m✔\u001b[0m Finished initialization");
+            logger.info("Finished effect initialization");
         } catch (ParseException | IOException | InterruptedException e) {
             Main.showException(e);
         } catch (SpotifyWebApiException spotifyWebApiException) {
@@ -273,49 +280,34 @@ public class EffectManager {
     private void spotifyTask() throws ParseException, SpotifyWebApiException, IOException, InterruptedException {
         CurrentlyPlaying currentPlayback = getCurrentlyPlaying();
         if (currentPlayback == null) {
+            if (isPlaying) {
+                logger.warn("Nothing is playing on Spotify. ");
+            }
             isPlaying = false;
-            CountDownLatch playLatch = new CountDownLatch(1);
-            displayTrackInformation(false, false);
-            new Thread(() -> {
-                try {
-                    CurrentlyPlaying current = getCurrentlyPlaying();
-                    while (current == null) {
-                        TimeUnit.SECONDS.sleep(4);
-                        current = getCurrentlyPlaying();
-                    }
-                    playLatch.countDown();
-                } catch (ParseException | IOException | InterruptedException e) {
-                    Main.showException(e);
-                } catch (SpotifyWebApiException spotifyWebApiException) {
-                    showSWAE(spotifyWebApiException);
-                }
-            }).start();
-            playLatch.await();
-            currentPlayback = getCurrentlyPlaying();
+            viewController.setPlayback(false);
+        } else {
+            Track newTrack = ((Track) currentPlayback.getItem());
+            if (!currentTrack.getId().equals(newTrack.getId())) {
+                currentTrack = newTrack;
+                currentTrackAnalysis = getTrackAnalysis(newTrack.getId());
+                progress = currentPlayback.getProgress_ms();
+                displayTrackInformation(true, false);
+            }
+
+            float progressDifference = Math.abs(currentPlayback.getProgress_ms() - progress);
+            if (currentPlayback.getIs_playing() && !isPlaying) {
+                isPlaying = true;
+
+                progress = currentPlayback.getProgress_ms() + 500;
+                displayTrackInformation(true, false);
+            } else if (!currentPlayback.getIs_playing() && isPlaying) {
+                isPlaying = false;
+                progress = currentPlayback.getProgress_ms();
+                displayTrackInformation(true, true);
+            } else if (currentPlayback.getIs_playing() && progressDifference >= 10) {
+                progress = currentPlayback.getProgress_ms();
+            }
         }
-
-        Track newTrack = ((Track) currentPlayback.getItem());
-        if(!currentTrack.getId().equals(newTrack.getId())) {
-            currentTrack = newTrack;
-            currentTrackAnalysis = getTrackAnalysis(newTrack.getId());
-            progress = currentPlayback.getProgress_ms();
-            displayTrackInformation(true, false);
-        }
-
-        float progressDifference = Math.abs(currentPlayback.getProgress_ms() - progress);
-        if(currentPlayback.getIs_playing() && !isPlaying) {
-            isPlaying = true;
-            progress = currentPlayback.getProgress_ms() + 500;
-            displayTrackInformation(true, false);
-        } else if(!currentPlayback.getIs_playing() && isPlaying) {
-            isPlaying = false;
-            progress = currentPlayback.getProgress_ms();
-            displayTrackInformation(true, true);
-        } else if (currentPlayback.getIs_playing() && progressDifference >= 10) {
-            progress = currentPlayback.getProgress_ms();
-        }
-
-
     }
 
     public void displayTrackInformation(boolean updateArt, boolean isPaused) {

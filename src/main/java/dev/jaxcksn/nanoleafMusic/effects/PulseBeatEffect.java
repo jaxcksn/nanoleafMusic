@@ -5,11 +5,13 @@
 
 package dev.jaxcksn.nanoleafMusic.effects;
 
+import ch.qos.logback.classic.Logger;
 import com.wrapper.spotify.model_objects.miscellaneous.AudioAnalysisSegment;
 import dev.jaxcksn.nanoleafMusic.Main;
 import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
 import io.github.rowak.nanoleafapi.*;
 import io.github.rowak.nanoleafapi.effectbuilder.CustomEffectBuilder;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +49,8 @@ public class PulseBeatEffect implements MusicEffect {
     private int paletteIndex = 0;
     public boolean albumMode = false;
     public final EffectType effectType = EffectType.PULSEBEAT;
+    private static final Logger logger
+            = (Logger) LoggerFactory.getLogger("nanoleafMusic.MusicEffect");
 
     public PulseBeatEffect(Color[] palette, Aurora aurora) {
         this.palette = palette;
@@ -57,7 +61,7 @@ public class PulseBeatEffect implements MusicEffect {
             Main.showException(e);
         }
         random = new Random();
-        System.out.println("\u001b[92;1m✔\u001b[0m Pulse Beat Loaded");
+        logger.info("Pulsebeat Effect was loaded");
     }
 
     @Override
@@ -95,7 +99,6 @@ public class PulseBeatEffect implements MusicEffect {
 
     public void setPalette(int[][] colors) {
         if (!albumMode) {
-            System.out.println("\u001b[96;1mℹ\u001b[0m Changed to Album Mode");
             albumMode = true;
         }
         Color[] newPalette = new Color[colors.length];
@@ -124,7 +127,6 @@ public class PulseBeatEffect implements MusicEffect {
     //If the palette is manually set
     public void setPalette(Color[] colors) {
         if (albumMode) {
-            System.out.println("\u001b[96;1mℹ\u001b[0m Changed to Palette Mode");
             albumMode = false;
         }
         palette = colors;
@@ -154,7 +156,9 @@ public class PulseBeatEffect implements MusicEffect {
                 try {
                     aurora.effects().displayEffect(ceb.build("", false));
                 } catch (StatusCodeException sce) {
+                    logger.warn("Unrecoverable exception was thrown. Shutting down program.");
                     Main.showException(sce);
+                    System.exit(1);
                 }
             }).start();
             setNextPaletteColor();

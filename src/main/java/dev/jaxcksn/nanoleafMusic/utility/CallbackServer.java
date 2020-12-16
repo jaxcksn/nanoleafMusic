@@ -5,10 +5,12 @@
 
 package dev.jaxcksn.nanoleafMusic.utility;
 
+import ch.qos.logback.classic.Logger;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import dev.jaxcksn.nanoleafMusic.Main;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -19,10 +21,14 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class CallbackServer {
     protected static HttpServer server;
     private final authServerHandler requestHandler = new authServerHandler();
+    private static final Logger logger
+            = (Logger) LoggerFactory.getLogger("nanoleafMusic.CallbackServer");
 
     static public class authServerHandler implements HttpHandler {
         private final CountDownLatch tokenLatch = new CountDownLatch(1);
         private String authCode;
+        private static final Logger logger
+                = (Logger) LoggerFactory.getLogger("nanoleafMusic.CallbackServer");
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
@@ -67,6 +73,7 @@ public class CallbackServer {
                         "    </div>\n" +
                         "</body>\n" +
                         "</html>";
+                logger.error("Received fatal response with from callback");
                 httpExchange.sendResponseHeaders(200, textResponse.length());
                 httpExchange.getResponseBody().write(textResponse.getBytes());
                 httpExchange.getResponseBody().flush();
@@ -108,11 +115,11 @@ public class CallbackServer {
                         "    </div>\n" +
                         "</body>\n" +
                         "</html>";
+                logger.info("Received valid response from callback");
                 httpExchange.sendResponseHeaders(200, textResponse.length());
                 httpExchange.getResponseBody().write(textResponse.getBytes());
                 httpExchange.getResponseBody().flush();
                 httpExchange.getResponseBody().close();
-                System.out.println("\u001b[92;1m✔\u001b[0m Spotify Authorization Given");
                 tokenLatch.countDown();
             }
         }
@@ -135,10 +142,12 @@ public class CallbackServer {
 
         private String fetchAuthCode() {
             try {
+                logger.info("Waiting for request to callback server");
                 tokenLatch.await();
             } catch (InterruptedException e) {
                 Main.showException(e);
             }
+            logger.info("Passing access code from callback");
             return authCode;
         }
 
@@ -150,7 +159,7 @@ public class CallbackServer {
         try {
             server = HttpServer.create(new InetSocketAddress("0.0.0.0", 8001), 0);
             server.createContext("/connect", requestHandler);
-            ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
+            ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(5, new Main.NamedThreadFactory("callback"));
             server.setExecutor(threadPoolExecutor);
             server.start();
         } catch (IOException e) {
@@ -164,6 +173,7 @@ public class CallbackServer {
     }
 
     public void destroy() {
+        logger.info("Destroying the callback server");
         server.stop(0);
     }
 
