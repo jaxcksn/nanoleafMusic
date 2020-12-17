@@ -5,9 +5,12 @@
 
 package dev.jaxcksn.nanoleafMusic.effects;
 
+import ch.qos.logback.classic.Logger;
+import dev.jaxcksn.nanoleafMusic.Main;
 import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
 import io.github.rowak.nanoleafapi.*;
 import io.github.rowak.nanoleafapi.effectbuilder.CustomEffectBuilder;
+import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 
@@ -20,6 +23,8 @@ public class FireworkEffect implements MusicEffect {
     private int paletteIndex = 0;
     public final EffectType effectType = EffectType.FIREWORKS;
     public boolean songChanged = false;
+    private static final Logger logger
+            = (Logger) LoggerFactory.getLogger("nanoleafMusic.MusicEffect");
 
     public FireworkEffect(Color[] palette, Aurora device) {
         this.palette = palette;
@@ -27,10 +32,10 @@ public class FireworkEffect implements MusicEffect {
         try {
             this.panels = device.panelLayout().getPanels();
         } catch (StatusCodeException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
         this.random = new Random();
-        System.out.println("\u001b[92;1m✔\u001b[0m Fireworks Loaded");
+        logger.info("Fireworks effect was loaded");
     }
 
     @Override
@@ -60,7 +65,6 @@ public class FireworkEffect implements MusicEffect {
 
     public void setPalette(int[][] colors) {
         if (!albumMode) {
-            System.out.println("\u001b[96;1mℹ\u001b[0m Changed to Album Mode");
             albumMode = true;
         }
         Color[] newPalette = new Color[colors.length];
@@ -93,7 +97,6 @@ public class FireworkEffect implements MusicEffect {
     //If the palette is manually set
     public void setPalette(Color[] colors) {
         if (albumMode) {
-            System.out.println("\u001b[96;1mℹ\u001b[0m Changed to Palette Mode");
             albumMode = false;
         }
         palette = colors;
@@ -127,7 +130,9 @@ public class FireworkEffect implements MusicEffect {
                 try {
                     device.effects().displayEffect(ceb.build("", false));
                 } catch (StatusCodeException e) {
-                    e.printStackTrace();
+                    logger.warn("Unrecoverable exception was thrown. Shutting down program.");
+                    Main.showException(e);
+                    System.exit(1);
                 }
             }).start();
 

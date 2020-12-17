@@ -5,12 +5,14 @@
 
 package dev.jaxcksn.nanoleafMusic.effects;
 
+import ch.qos.logback.classic.Logger;
 import com.wrapper.spotify.model_objects.miscellaneous.AudioAnalysisMeasure;
+import dev.jaxcksn.nanoleafMusic.Main;
 import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
 import io.github.rowak.nanoleafapi.*;
 import io.github.rowak.nanoleafapi.effectbuilder.CustomEffectBuilder;
+import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -27,6 +29,8 @@ public class VibeEffect implements MusicEffect {
     public final EffectType effectType = EffectType.VIBE;
     public boolean songChanged = false;
     private AudioAnalysisMeasure currentSection;
+    private static final Logger logger
+            = (Logger) LoggerFactory.getLogger("nanoleafMusic.MusicEffect");
 
     public VibeEffect(Color[] palette, Aurora device) {
         this.palette = palette;
@@ -34,11 +38,11 @@ public class VibeEffect implements MusicEffect {
         try {
             this.panels = device.panelLayout().getPanels();
         } catch (StatusCodeException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
         this.random = new Random();
         paletteIndex = random.nextInt(palette.length);
-        System.out.println("\u001b[92;1m✔\u001b[0m Vibe Loaded");
+        logger.info("Vibe effect was loaded");
     }
 
 
@@ -70,25 +74,13 @@ public class VibeEffect implements MusicEffect {
                 try {
                     device.effects().displayEffect(ceb.build("", false));
                 } catch (StatusCodeException e) {
-                    e.printStackTrace();
+                    logger.error("Unrecoverable exception was thrown. Shutting down program.");
+                    Main.showException(e);
+                    System.exit(1);
                 }
             }).start();
 
 
-        }
-    }
-
-    public void setNeighbors(Panel panel, final List<Integer> marked,
-                             Panel[] panels, CustomEffectBuilder ceb, java.awt.Color color,
-                             int time) {
-        for (Panel p : panel.getNeighbors(panels)) {
-            if (!marked.contains(p.getId())) {
-                ceb.addFrame(p, new Frame(color.getRed(),
-                        color.getGreen(), color.getBlue(), 0, 3));
-                //ceb.addFrame(p, new Frame(0, 0, 0, 0, 2));
-                marked.add(p.getId());
-                setNeighbors(p, marked, panels, ceb, color, time);
-            }
         }
     }
 
@@ -119,7 +111,6 @@ public class VibeEffect implements MusicEffect {
 
     public void setPalette(int[][] colors) {
         if (!albumMode) {
-            System.out.println("\u001b[96;1mℹ\u001b[0m Changed to Album Mode");
             albumMode = true;
         }
         Color[] newPalette = new Color[colors.length];
@@ -152,7 +143,6 @@ public class VibeEffect implements MusicEffect {
     //If the palette is manually set
     public void setPalette(Color[] colors) {
         if (albumMode) {
-            System.out.println("\u001b[96;1mℹ\u001b[0m Changed to Palette Mode");
             albumMode = false;
         }
         palette = colors;

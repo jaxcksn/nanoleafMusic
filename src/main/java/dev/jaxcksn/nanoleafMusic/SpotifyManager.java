@@ -5,6 +5,7 @@
 
 package dev.jaxcksn.nanoleafMusic;
 
+import ch.qos.logback.classic.Logger;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
@@ -19,6 +20,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import org.apache.hc.core5.http.ParseException;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -36,7 +38,8 @@ public class SpotifyManager {
             .setRedirectUri(REDIRECT_URI)
             .build();
     public CallbackServer cbServer;
-
+    private static final Logger logger
+            = (Logger) LoggerFactory.getLogger("nanoleafMusic.SpotifyManager");
     public URI connectURI;
     public int expiresIn;
 
@@ -45,7 +48,7 @@ public class SpotifyManager {
         try {
             pkceVerification = PKCE.generateCodeVerifier();
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
 
         AuthorizationCodeUriRequest authorizationCodeUriRequest = null;
@@ -54,12 +57,12 @@ public class SpotifyManager {
                     .scope("user-read-currently-playing, user-read-playback-state")
                     .build();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
         assert authorizationCodeUriRequest != null;
         connectURI = authorizationCodeUriRequest.execute();
         cbServer = new CallbackServer();
-        System.out.println("\u001b[92;1m✔\u001b[0m Started Callback Server");
+        logger.info("Callback server started and listening at localhost:8001/connect");
     }
 
     public void getCredentials(String accessCode) {
@@ -71,7 +74,7 @@ public class SpotifyManager {
             spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
             expiresIn = authorizationCodeCredentials.getExpiresIn();
         } catch (ParseException | IOException e) {
-            e.printStackTrace();
+            Main.showException(e);
         } catch (SpotifyWebApiException spotifyWebApiException) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Exception");
