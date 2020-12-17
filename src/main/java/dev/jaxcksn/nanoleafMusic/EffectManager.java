@@ -106,7 +106,6 @@ public class EffectManager {
 
     public void reloadEffect() {
         logger.info("Reloading Effect...");
-        dumpEffect();
         logger.warn("Attempting to shut down the Scheduled Executor Service. If this fails, the program can't recover.");
         sES.shutdownNow();
         try {
@@ -129,18 +128,6 @@ public class EffectManager {
         }
 
 
-    }
-
-    private void dumpEffect() {
-        try {
-            logger.info("Device Effect Data: {}", device.effects().getCurrentEffect().getAnimData());
-            logger.info("Is Playing: {}", isPlaying);
-            logger.info("Current Track: {}", currentTrack.getName());
-            logger.info("Effect Type: {}", activeEffect.getEffectType());
-            logger.info("Palette: {}", (Object[]) activeEffect.getPalette());
-        } catch (StatusCodeException e) {
-            e.printStackTrace();
-        }
     }
 
 
