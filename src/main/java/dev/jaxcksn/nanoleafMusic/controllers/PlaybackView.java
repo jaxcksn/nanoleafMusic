@@ -5,6 +5,7 @@
 
 package dev.jaxcksn.nanoleafMusic.controllers;
 
+import ch.qos.logback.classic.Logger;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.model_objects.specification.ArtistSimplified;
 import dev.jaxcksn.nanoleafMusic.DataManager;
@@ -28,6 +29,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -47,16 +49,21 @@ public class PlaybackView {
     public RadioMenuItem FireworksToggle;
     public RadioMenuItem PulseBeatToggle;
     public Label EffectLabel;
+    public RadioMenuItem VibeToggle;
     private EffectManager effectManager;
-
+    private static final Logger logger
+            = (Logger) LoggerFactory.getLogger("nanoleafMusic.PlaybackView");
     private Scene palettePickerScene;
 
     public void initData(SpotifyApi spotifyApi, int expiresIn, Aurora device) {
+        logger.info("Initializing the playback view");
         PulseBeatToggle.setUserData(EffectType.PULSEBEAT);
         FireworksToggle.setUserData(EffectType.FIREWORKS);
+        VibeToggle.setUserData(EffectType.VIBE);
 
         effectManager = new EffectManager(spotifyApi, expiresIn, device, this);
         Settings loadedSettings = effectManager.settings;
+        logger.info("Album mode set to {}", loadedSettings.albumColors);
         if (loadedSettings.albumColors) {
             colorPaletteSelector.setDisable(true);
             albumColorsCheckbox.setSelected(true);
@@ -70,12 +77,20 @@ public class PlaybackView {
             case PULSEBEAT:
                 PulseBeatToggle.setSelected(true);
                 FireworksToggle.setSelected(false);
+                VibeToggle.setSelected(false);
                 EffectLabel.setText("PULSEBEAT");
                 break;
             case FIREWORKS:
                 PulseBeatToggle.setSelected(false);
                 FireworksToggle.setSelected(true);
+                VibeToggle.setSelected(false);
                 EffectLabel.setText("FIREWORKS");
+                break;
+            case VIBE:
+                PulseBeatToggle.setSelected(false);
+                FireworksToggle.setSelected(false);
+                VibeToggle.setSelected(true);
+                EffectLabel.setText("VIBE");
                 break;
         }
 
@@ -89,12 +104,20 @@ public class PlaybackView {
         albumColorsCheckbox.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
             colorPaletteSelector.setDisable(new_val);
             effectManager.settings.albumColors = new_val;
-            new Thread(() -> DataManager.changeAlbumMode(new_val)).start();
+            if (new_val) {
+                effectManager.displayTrackInformation(true, false);
+            }
+
+            Thread setAlbumColorData = new Thread(() -> DataManager.changeAlbumMode(new_val));
+            setAlbumColorData.setName("data");
+            setAlbumColorData.start();
         });
 
-        new Thread(() -> {
+        Thread startEffectThread = new Thread(() -> {
             effectManager.startEffect();
-        }).start();
+        });
+        startEffectThread.setName("effect-start");
+        startEffectThread.start();
 
         FXMLLoader palettePickerLoader = new FXMLLoader(Main.class.getResource("/palettePicker.fxml"));
         try {
@@ -104,8 +127,9 @@ public class PlaybackView {
             palettePicker.updatePalette();
             palettePickerScene = new Scene(palettePickerRoot, 400, 300);
             palettePickerScene.getStylesheets().add("/gui.css");
+            logger.info("Palette picker is ready");
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
     }
 
@@ -146,7 +170,9 @@ public class PlaybackView {
     }
 
     public void reloadEffectManager(ActionEvent event) {
+        setLoading(true);
         effectManager.reloadEffect();
+        setLoading(false);
     }
 
     private void setLoading(boolean status) {
@@ -164,10 +190,11 @@ public class PlaybackView {
             setLoading(false);
         }).start();
 
-        new Thread(() -> {
+        Thread changeEffectThread = new Thread(() -> {
             DataManager.changeEffectType(effectType);
-        }).start();
-
+        });
+        changeEffectThread.setName("data");
+        changeEffectThread.start();
         EffectLabel.setText(effectType.toString());
     }
 

@@ -5,6 +5,7 @@
 
 package dev.jaxcksn.nanoleafMusic.controllers;
 
+import ch.qos.logback.classic.Logger;
 import dev.jaxcksn.nanoleafMusic.DataManager;
 import dev.jaxcksn.nanoleafMusic.Main;
 import dev.jaxcksn.nanoleafMusic.utility.DataManagerException;
@@ -29,6 +30,7 @@ import net.straylightlabs.hola.dns.Domain;
 import net.straylightlabs.hola.sd.Instance;
 import net.straylightlabs.hola.sd.Query;
 import net.straylightlabs.hola.sd.Service;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.IOException;
@@ -51,10 +53,12 @@ public class ConnectToDevice {
     private ObservableList<String> deviceList;
     private List<AuroraMetadata> auroraList;
     private DataManager dataManager;
+    private static final Logger logger
+            = (Logger) LoggerFactory.getLogger("nanoleafMusic.ConnectToDevice");
 
     public void initialize() {
         dataManager = new DataManager();
-        if(!dataManager.hasSaved) {
+        if (!dataManager.hasSaved) {
             reconnectBtn.setDisable(true);
         }
 
@@ -64,6 +68,7 @@ public class ConnectToDevice {
                 findDevices();
                 nanoleafList.setItems(deviceList);
             });
+            refreshThread.setName("initial-mDNS");
             refreshThread.start();
         } catch (BufferUnderflowException ignored) {
 
@@ -99,8 +104,8 @@ public class ConnectToDevice {
                     System.out.println("IPV6Exception");
                 }
             }));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Main.showException(e);
         }
 
         return auroras;
@@ -146,12 +151,13 @@ public class ConnectToDevice {
         List<AuroraMetadata> auroras = null;
         try {
             auroras = findNanoleaf();
+            logger.info("Found {} devices from mDNS query", auroras.size());
             auroraList = auroras;
             for (AuroraMetadata aurora : auroras) {
                 deviceList.add(aurora.getDeviceName());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
         setLoading(false);
     }
@@ -167,7 +173,7 @@ public class ConnectToDevice {
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.getStylesheets().add("/gui.css");
             alert.showAndWait();
-            System.out.println("\u001b[92;1m✔\u001b[0m Connected to Nanoleaf");
+            logger.info("Successfully connected to {}", savedDevice.getName());
             transitionToSpotify(savedDevice);
         } catch (DataManagerException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -236,23 +242,27 @@ public class ConnectToDevice {
         deviceList = FXCollections.observableArrayList();
         try {
             Thread refreshThread = new Thread(() -> {
+
                 findDevices();
                 nanoleafList.setItems(deviceList);
             });
+            refreshThread.setName("refresh-mDNS");
             refreshThread.start();
         } catch (BufferUnderflowException e) {
-            System.out.println("\u001b[91;1mX\u001b[0m No Devices Found.");
+            Main.showException(e);
         }
 
     }
 
     private void getAccessToken(AuroraMetadata metadata) {
         try {
+            logger.info("Asking {} for an access token", metadata.getDeviceName());
             String accessToken = Setup.createAccessToken(metadata.getHostName(),metadata.getPort(),"v1");
             Aurora connectedDevice = new Aurora(metadata.getHostName(),metadata.getPort(),"v1",accessToken);
+            logger.info("Successfully connected to {}", metadata.getDeviceName());
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setHeaderText("Save device for quick reconnect?");
-            alert.setContentText("You can save the device and access token to quickly reconnect last time. Saving this device will overwrite any previous saved devices.");
+            alert.setContentText("You can opt to save this device and access token to quickly reconnect next time. Saving this device will overwrite any previous saved devices.");
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.setMinHeight(Region.USE_PREF_SIZE);
             dialogPane.getStylesheets().add("/gui.css");
@@ -260,7 +270,6 @@ public class ConnectToDevice {
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 dataManager.saveDevice(connectedDevice);
             }
-            System.out.println("\u001b[92;1m✔\u001b[0m Connected to Nanoleaf");
             transitionToSpotify(connectedDevice);
 
         } catch (StatusCodeException.ForbiddenException e) {
@@ -273,7 +282,7 @@ public class ConnectToDevice {
             alert.showAndWait();
             setLoading(false);
         } catch (StatusCodeException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
     }
 
@@ -286,10 +295,10 @@ public class ConnectToDevice {
             Stage stage = (Stage) nanoleafList.getScene().getWindow();
             Scene scene = new Scene(root, 400, 300);
             scene.getStylesheets().add("/gui.css");
+            logger.info("Setting JavaFX scene to 'ConnectToSpotify' view");
             stage.setScene(scene);
-
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
 
     }

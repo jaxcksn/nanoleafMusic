@@ -6,6 +6,7 @@
 package dev.jaxcksn.nanoleafMusic.effects;
 
 import ch.qos.logback.classic.Logger;
+import com.wrapper.spotify.model_objects.miscellaneous.AudioAnalysisMeasure;
 import dev.jaxcksn.nanoleafMusic.Main;
 import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
 import io.github.rowak.nanoleafapi.*;
@@ -14,19 +15,24 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 
-public class FireworkEffect implements MusicEffect {
+/**
+ * More minimal beat effect, where the colors fade from one to another, and changes in the
+ * parts of the song changes the color.
+ */
+public class VibeEffect implements MusicEffect {
     public Color[] palette;
     public Aurora device;
     private Panel[] panels;
     private final Random random;
     public boolean albumMode = false;
     private int paletteIndex = 0;
-    public final EffectType effectType = EffectType.FIREWORKS;
+    public final EffectType effectType = EffectType.VIBE;
     public boolean songChanged = false;
+    private AudioAnalysisMeasure currentSection;
     private static final Logger logger
             = (Logger) LoggerFactory.getLogger("nanoleafMusic.MusicEffect");
 
-    public FireworkEffect(Color[] palette, Aurora device) {
+    public VibeEffect(Color[] palette, Aurora device) {
         this.palette = palette;
         this.device = device;
         try {
@@ -35,7 +41,47 @@ public class FireworkEffect implements MusicEffect {
             Main.showException(e);
         }
         this.random = new Random();
-        logger.info("Fireworks effect was loaded");
+        paletteIndex = random.nextInt(palette.length);
+        logger.info("Vibe effect was loaded");
+    }
+
+
+    @Override
+    public void setSongChanged() {
+        songChanged = true;
+    }
+
+    @Override
+    public void run(SpecificAudioAnalysis analysis) throws StatusCodeException {
+        if (analysis.getBeat() != null) {
+            if (currentSection == null) {
+                currentSection = analysis.getBar();
+            } else if (currentSection != analysis.getBar()) {
+                currentSection = analysis.getBar();
+                setNextPaletteColor();
+            }
+            Color color = palette[paletteIndex];
+            int panelId = panels[random.nextInt(panels.length)].getId();
+            int[] colorRGB = {color.getRed(), color.getGreen(), color.getBlue()};
+            java.awt.Color darkerColor = new java.awt.Color(colorRGB[0], colorRGB[1], colorRGB[2]).darker().darker().darker();
+            CustomEffectBuilder ceb = new CustomEffectBuilder(device);
+            ceb.addFrameToAllPanels(new Frame(darkerColor.getRed(),
+                    darkerColor.getGreen(), darkerColor.getBlue(), 0, 2));
+            ceb.addFrame(panelId, new Frame(colorRGB[0], colorRGB[1], colorRGB[2], 0, 1));
+
+
+            new Thread(() -> {
+                try {
+                    device.effects().displayEffect(ceb.build("", false));
+                } catch (StatusCodeException e) {
+                    logger.error("Unrecoverable exception was thrown. Shutting down program.");
+                    Main.showException(e);
+                    System.exit(1);
+                }
+            }).start();
+
+
+        }
     }
 
     @Override
@@ -102,44 +148,6 @@ public class FireworkEffect implements MusicEffect {
         palette = colors;
     }
 
-
-    public void run(SpecificAudioAnalysis analysis) throws StatusCodeException {
-        if (analysis.getBeat() != null && palette.length > 0) {
-            Color color = palette[paletteIndex];
-            int[] colorRGB = {color.getRed(), color.getGreen(), color.getBlue()};
-            int originPanelIndex = random.nextInt(panels.length);
-            int panelID = panels[originPanelIndex].getId();
-            Panel[] neighbors = panels[originPanelIndex].getNeighbors(panels);
-            int fireworkLength = random.nextInt(neighbors.length + 1);
-            CustomEffectBuilder ceb = new CustomEffectBuilder(device);
-            Frame toColor = new Frame(colorRGB[0], colorRGB[1], colorRGB[2], 0, 1);
-            Frame toBlack = new Frame(0, 0, 0, 0, 5);
-            if (songChanged) {
-                songChanged = false;
-                ceb.addFrameToAllPanels(new Frame(0, 0, 0, 0, 1));
-            }
-            ceb.addFrame(panelID, toColor);
-            for (int i = 0; i < fireworkLength; i++) {
-                ceb.addFrame(neighbors[i].getId(), toColor);
-            }
-            ceb.addFrame(panelID, toBlack);
-            for (int i = 0; i < fireworkLength; i++) {
-                ceb.addFrame(neighbors[i].getId(), toBlack);
-            }
-            new Thread(() -> {
-                try {
-                    device.effects().displayEffect(ceb.build("", false));
-                } catch (StatusCodeException e) {
-                    logger.warn("Unrecoverable exception was thrown. Shutting down program.");
-                    Main.showException(e);
-                    System.exit(1);
-                }
-            }).start();
-
-            setNextPaletteColor();
-        }
-    }
-
     protected void setNextPaletteColor() {
         if (paletteIndex == palette.length - 1) {
             paletteIndex = 0;
@@ -148,8 +156,4 @@ public class FireworkEffect implements MusicEffect {
         }
     }
 
-    @Override
-    public void setSongChanged() {
-        songChanged = true;
-    }
 }

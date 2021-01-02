@@ -5,6 +5,7 @@
 
 package dev.jaxcksn.nanoleafMusic.controllers;
 
+import ch.qos.logback.classic.Logger;
 import dev.jaxcksn.nanoleafMusic.Main;
 import dev.jaxcksn.nanoleafMusic.SpotifyManager;
 import io.github.rowak.nanoleafapi.Aurora;
@@ -18,6 +19,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.IOException;
@@ -25,7 +27,8 @@ import java.io.IOException;
 public class ConnectToSpotify {
     private Aurora device;
     private SpotifyManager spotifyManager;
-
+    private static final Logger logger
+            = (Logger) LoggerFactory.getLogger("nanoleafMusic.ConnectToSpotify");
     @FXML
     private BorderPane borderPane;
     @FXML
@@ -44,8 +47,10 @@ public class ConnectToSpotify {
         if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
             try {
                 Desktop.getDesktop().browse(spotifyManager.connectURI);
+                logger.info("Opened authentication URL in browser");
                 String accessCode = spotifyManager.cbServer.getAuthCode();
                 spotifyManager.getCredentials(accessCode);
+                logger.info("Successfully created Spotify API credentials from accessCode");
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Spotify Connected");
                 alert.setContentText("Spotify was successfully connected.");
@@ -56,7 +61,7 @@ public class ConnectToSpotify {
                 spotifyManager.cbServer.destroy();
                 transitionToPlayer();
             } catch (IOException e) {
-                e.printStackTrace();
+                Main.showException(e);
             }
         }
     }
@@ -75,11 +80,11 @@ public class ConnectToSpotify {
             Stage stage = (Stage) borderPane.getScene().getWindow();
             Scene scene = new Scene(root, 400, 300);
             scene.getStylesheets().add("/gui.css");
+            logger.info("Setting JavaFX scene to 'PlaybackView' view");
             stage.setScene(scene);
 
-
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
     }
 

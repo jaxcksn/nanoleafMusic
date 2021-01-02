@@ -5,6 +5,7 @@
 
 package dev.jaxcksn.nanoleafMusic;
 
+import ch.qos.logback.classic.Logger;
 import com.github.kevinsawicki.http.HttpRequest;
 import dev.jaxcksn.nanoleafMusic.effects.EffectType;
 import dev.jaxcksn.nanoleafMusic.utility.DataManagerException;
@@ -12,6 +13,7 @@ import dev.jaxcksn.nanoleafMusic.utility.Settings;
 import dev.jaxcksn.nanoleafMusic.utility.dMEC;
 import io.github.rowak.nanoleafapi.Aurora;
 import io.github.rowak.nanoleafapi.StatusCodeException;
+import org.slf4j.LoggerFactory;
 
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -25,9 +27,11 @@ import java.util.prefs.Preferences;
 public class DataManager {
     private static final Preferences preferences = Preferences.userNodeForPackage(Main.class);
     public boolean hasSaved;
+    private static final Logger logger
+            = (Logger) LoggerFactory.getLogger("nanoleafMusic.DataManager");
 
     public DataManager() {
-        String testForSaved = preferences.get("savedDevice",null);
+        String testForSaved = preferences.get("savedDevice", null);
         hasSaved = testForSaved != null && !testForSaved.isEmpty();
     }
 
@@ -39,6 +43,7 @@ public class DataManager {
                 ";" +
                 device.getAccessToken();
         preferences.put("savedDevice", str);
+        logger.info("Saved {} to preferences", device.getName());
         try {
             preferences.flush();
         } catch (BackingStoreException e) {
@@ -49,6 +54,7 @@ public class DataManager {
     public Aurora loadDevice() {
         String saved = preferences.get("savedDevice",null);
         if (saved == null || saved.isEmpty() || !hasSaved) {
+            logger.error("Could not load from preferences, key is null or empty.");
             throw new DataManagerException("Could not load from preferences, key is null or empty.", dMEC.NDS);
         } else {
             try {
@@ -57,12 +63,15 @@ public class DataManager {
                 int port = Integer.parseInt(deviceData[1]);
                 String accessToken = deviceData[2];
                 try {
+                    logger.info("Loading device at {} from preferences", hostName);
                     return new Aurora(hostName,port,"v1",accessToken);
                 } catch (StatusCodeException | HttpRequest.HttpRequestException e) {
+                    logger.error("Error creating device object from saved data.", e);
                     throw new DataManagerException("Error creating device object from saved data.",dMEC.ISD);
                 }
 
             } catch (Exception e) {
+                logger.error("Could not process saved device data, string may be malformed.", e);
                 throw new DataManagerException("Could not process saved device data, string may be malformed.", dMEC.MDS);
             }
         }
@@ -70,17 +79,12 @@ public class DataManager {
 
     public void removeDevice() {
         preferences.remove("savedDevice");
+        logger.info("Removed saved device from preferences");
         hasSaved = false;
     }
 
     public static Settings loadSettings() {
-        boolean albumColors = preferences.getBoolean("useAlbumColors",true);
-        int albumPaletteLength = preferences.getInt("numberOfAlbumColors",6);
-        if(albumPaletteLength > 12) {
-            albumPaletteLength = 12;
-        } else if (albumPaletteLength < 3) {
-            albumPaletteLength = 3;
-        }
+        boolean albumColors = preferences.getBoolean("useAlbumColors", true);
         String colorPalette = preferences.get("colorPalette", "#FF0000,#00FF00,#0000FF");
         if (colorPalette.length() > 95) {
             colorPalette = colorPalette.substring(0, 95);
@@ -89,27 +93,33 @@ public class DataManager {
         }
         String effectString = preferences.get("selectedEffect", "PULSEBEAT");
         EffectType activeEffectType = EffectType.valueOf(effectString);
-        return new Settings(albumColors, albumPaletteLength, colorPalette, activeEffectType);
+        logger.info("Loaded settings from preferences");
+        return new Settings(albumColors, colorPalette, activeEffectType);
     }
 
     public static void updateSettings(Settings settings) {
         preferences.putBoolean("useAlbumColors", settings.albumColors);
         preferences.put("colorPalette", settings.colorPalette);
+        preferences.put("savedEffect", settings.activeEffectType.toString());
+        logger.info("Updated settings in preferences");
     }
 
     public static void changeAlbumMode(boolean b) {
         preferences.putBoolean("useAlbumColors", b);
+        logger.info("Changed album mode to {} in preferences", b);
     }
 
     public static void changeEffectType(EffectType effectType) {
         preferences.put("selectedEffect", effectType.toString());
+        logger.info("Changed saved effect type to {} in preferences", effectType);
     }
 
     public static void clearSavedData() {
         try {
             preferences.clear();
+            logger.info("Cleared all data from preferences");
         } catch (BackingStoreException e) {
-            e.printStackTrace();
+            Main.showException(e);
         }
     }
 
