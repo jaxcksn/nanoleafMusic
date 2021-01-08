@@ -22,11 +22,6 @@
             <version>3.8.1</version>
         </dependency>
         <dependency>
-            <groupId>io.github.rowak</groupId>
-            <artifactId>nanoleaf-aurora</artifactId>
-            <version>1.5.2</version>
-        </dependency>
-        <dependency>
             <groupId>se.michaelthelin.spotify</groupId>
             <artifactId>spotify-web-api-java</artifactId>
             <version>6.3.0</version>
@@ -45,6 +40,16 @@
             <groupId>ca.weblite</groupId>
             <artifactId>java-objc-bridge</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20201115</version>
         </dependency>
     </dependencies>
 

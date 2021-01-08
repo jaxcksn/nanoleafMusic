@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package dev.jaxcksn.nanoleafMusic.effects;
+package dev.jaxcksn.nanoleafMusic.musicEffect;
 
 public enum EffectType {
     PULSEBEAT, FIREWORKS, VIBE

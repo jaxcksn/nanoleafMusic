@@ -6,9 +6,9 @@
 package dev.jaxcksn.nanoleafMusic.controllers;
 
 import ch.qos.logback.classic.Logger;
+import dev.jaxcksn.nanoleafJava.NLDevice;
 import dev.jaxcksn.nanoleafMusic.Main;
 import dev.jaxcksn.nanoleafMusic.SpotifyManager;
-import io.github.rowak.nanoleafapi.Aurora;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -25,7 +25,7 @@ import java.awt.*;
 import java.io.IOException;
 
 public class ConnectToSpotify {
-    private Aurora device;
+    private NLDevice device;
     private SpotifyManager spotifyManager;
     private static final Logger logger
             = (Logger) LoggerFactory.getLogger("nanoleafMusic.ConnectToSpotify");
@@ -38,7 +38,7 @@ public class ConnectToSpotify {
         spotifyManager = new SpotifyManager();
     }
 
-    public void initData(Aurora device) {
+    public void initData(NLDevice device) {
         this.device = device;
     }
 

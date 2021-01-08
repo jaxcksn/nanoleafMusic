@@ -4,8 +4,7 @@
  */
 
 package dev.jaxcksn.nanoleafMusic.utility;
-
-import dev.jaxcksn.nanoleafMusic.effects.EffectType;
+import dev.jaxcksn.nanoleafMusic.musicEffect.EffectType;
 
 public class Settings {
     public boolean albumColors;

@@ -6,13 +6,12 @@
 package dev.jaxcksn.nanoleafMusic;
 
 import ch.qos.logback.classic.Logger;
-import com.github.kevinsawicki.http.HttpRequest;
-import dev.jaxcksn.nanoleafMusic.effects.EffectType;
+import dev.jaxcksn.nanoleafJava.NLDevice;
+import dev.jaxcksn.nanoleafJava.NLDeviceData;
+import dev.jaxcksn.nanoleafMusic.musicEffect.EffectType;
 import dev.jaxcksn.nanoleafMusic.utility.DataManagerException;
 import dev.jaxcksn.nanoleafMusic.utility.Settings;
 import dev.jaxcksn.nanoleafMusic.utility.dMEC;
-import io.github.rowak.nanoleafapi.Aurora;
-import io.github.rowak.nanoleafapi.StatusCodeException;
 import org.slf4j.LoggerFactory;
 
 import java.util.prefs.BackingStoreException;
@@ -35,15 +34,15 @@ public class DataManager {
         hasSaved = testForSaved != null && !testForSaved.isEmpty();
     }
 
-    public void saveDevice(Aurora device) {
+    public void saveDevice(NLDevice device) {
         preferences.remove("savedDevice");
-        String str = device.getHostName() +
+        String str = device.deviceData.hostName +
                 ";" +
-                device.getPort() +
+                device.deviceData.port +
                 ";" +
-                device.getAccessToken();
+                device.getAuthCode();
         preferences.put("savedDevice", str);
-        logger.info("Saved {} to preferences", device.getName());
+        logger.info("Saved {} to preferences", device.getDeviceName());
         try {
             preferences.flush();
         } catch (BackingStoreException e) {
@@ -51,8 +50,8 @@ public class DataManager {
         }
     }
 
-    public Aurora loadDevice() {
-        String saved = preferences.get("savedDevice",null);
+    public NLDevice loadDevice() {
+        String saved = preferences.get("savedDevice", null);
         if (saved == null || saved.isEmpty() || !hasSaved) {
             logger.error("Could not load from preferences, key is null or empty.");
             throw new DataManagerException("Could not load from preferences, key is null or empty.", dMEC.NDS);
@@ -62,13 +61,8 @@ public class DataManager {
                 String hostName = deviceData[0];
                 int port = Integer.parseInt(deviceData[1]);
                 String accessToken = deviceData[2];
-                try {
                     logger.info("Loading device at {} from preferences", hostName);
-                    return new Aurora(hostName,port,"v1",accessToken);
-                } catch (StatusCodeException | HttpRequest.HttpRequestException e) {
-                    logger.error("Error creating device object from saved data.", e);
-                    throw new DataManagerException("Error creating device object from saved data.",dMEC.ISD);
-                }
+                return new NLDevice(new NLDeviceData(hostName, port, ""), accessToken);
 
             } catch (Exception e) {
                 logger.error("Could not process saved device data, string may be malformed.", e);

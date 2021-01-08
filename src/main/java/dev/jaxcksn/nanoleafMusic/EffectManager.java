@@ -18,14 +18,13 @@ import com.wrapper.spotify.requests.authorization.authorization_code.pkce.Author
 import com.wrapper.spotify.requests.data.player.GetUsersCurrentlyPlayingTrackRequest;
 import com.wrapper.spotify.requests.data.tracks.GetAudioAnalysisForTrackRequest;
 import de.androidpit.colorthief.ColorThief;
+import dev.jaxcksn.nanoleafJava.NLColor;
+import dev.jaxcksn.nanoleafJava.NLDevice;
 import dev.jaxcksn.nanoleafMusic.controllers.PlaybackView;
-import dev.jaxcksn.nanoleafMusic.effects.*;
+import dev.jaxcksn.nanoleafMusic.musicEffect.*;
 import dev.jaxcksn.nanoleafMusic.utility.PaletteColor;
 import dev.jaxcksn.nanoleafMusic.utility.Settings;
 import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
-import io.github.rowak.nanoleafapi.Aurora;
-import io.github.rowak.nanoleafapi.Color;
-import io.github.rowak.nanoleafapi.StatusCodeException;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -48,7 +47,7 @@ public class EffectManager {
     //--- Control Variables
     public SpotifyApi spotifyApi;
     private int expiresIn;
-    public Aurora device;
+    public NLDevice device;
     private final PlaybackView viewController;
     public MusicEffect activeEffect;
 
@@ -60,12 +59,12 @@ public class EffectManager {
     private int progress;
     private String artworkURL = "@images/gray-square.png";
     public Settings settings;
-    public Color[] palette = new Color[]{Color.RED, Color.BLUE, Color.GREEN};
+    public NLColor[] palette = new NLColor[]{new NLColor(255, 0, 0), new NLColor(0, 255, 0), new NLColor(0, 0, 255)};
     private ScheduledExecutorService sES;
     private static final Logger logger
             = (Logger) LoggerFactory.getLogger("nanoleafMusic.EffectManager");
 
-    public EffectManager(SpotifyApi spotifyApi, int expiresIn, Aurora device, PlaybackView viewController) {
+    public EffectManager(SpotifyApi spotifyApi, int expiresIn, NLDevice device, PlaybackView viewController) {
         this.spotifyApi = spotifyApi;
         this.expiresIn = expiresIn;
         this.device = device;
@@ -73,13 +72,13 @@ public class EffectManager {
         settings = DataManager.loadSettings();
         switch (settings.activeEffectType) {
             case FIREWORKS:
-                this.activeEffect = new FireworkEffect(palette, device);
+                this.activeEffect = new Fireworks(palette, device);
                 break;
             case PULSEBEAT:
-                this.activeEffect = new PulseBeatEffect(palette, device);
+                this.activeEffect = new PulseBeat(palette, device);
                 break;
             case VIBE:
-                this.activeEffect = new VibeEffect(palette, device);
+                this.activeEffect = new Vibe(palette, device);
                 break;
         }
 
@@ -89,16 +88,16 @@ public class EffectManager {
 
     public void switchEffect(EffectType effectType) {
         settings.activeEffectType = effectType;
-        Color[] currentPalette = activeEffect.getPalette();
+        NLColor[] currentPalette = activeEffect.getPalette();
         switch (effectType) {
             case FIREWORKS:
-                this.activeEffect = new FireworkEffect(currentPalette, device);
+                this.activeEffect = new Fireworks(currentPalette, device);
                 break;
             case PULSEBEAT:
-                this.activeEffect = new PulseBeatEffect(currentPalette, device);
+                this.activeEffect = new PulseBeat(currentPalette, device);
                 break;
             case VIBE:
-                this.activeEffect = new VibeEffect(currentPalette, device);
+                this.activeEffect = new Vibe(currentPalette, device);
                 break;
         }
     }
@@ -164,7 +163,7 @@ public class EffectManager {
                 if (isPlaying) {
                     try {
                         pulseTask();
-                    } catch (StatusCodeException | IOException e) {
+                    } catch (IOException e) {
                         Main.showException(e);
                     }
                 }
@@ -256,7 +255,7 @@ public class EffectManager {
     }
     // ---
 
-    private void pulseTask() throws StatusCodeException, IOException {
+    private void pulseTask() throws IOException {
         if (isPlaying) {
             SpecificAudioAnalysis analysis = SpecificAudioAnalysis.getAnalysis(currentTrackAnalysis, progress, 100);
             activeEffect.run(analysis);
