@@ -139,3 +139,6 @@ hs_err_pid*
 /src/main/resources/META-INF/
 .DS_Store
 /target/
+/target/classes/
+/target/generated-sources/
+/target/maven-archiver/
