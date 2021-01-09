@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Main extends Application {
     private static Proxy appNapPrevented;
     private static final Logger logger
-            = (Logger) LoggerFactory.getLogger("nanoleafMusic.Main");
+            = (Logger) LoggerFactory.getLogger("nanoleafMusic.dev.jaxcksn.nanoleafMusic.Main");
 
     public static void main(String[] args) {
         logger.info("Application Started");

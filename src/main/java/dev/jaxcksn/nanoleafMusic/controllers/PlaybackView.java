@@ -119,7 +119,7 @@ public class PlaybackView {
         startEffectThread.setName("effect-start");
         startEffectThread.start();
 
-        FXMLLoader palettePickerLoader = new FXMLLoader(Main.class.getResource("/palettePicker.fxml"));
+        FXMLLoader palettePickerLoader = new FXMLLoader(dev.jaxcksn.nanoleafMusic.Main.class.getResource("/palettePicker.fxml"));
         try {
             Parent palettePickerRoot = palettePickerLoader.load();
             PalettePicker palettePicker = palettePickerLoader.getController();
@@ -201,7 +201,7 @@ public class PlaybackView {
     public void showAbout(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText("About this Program");
-        alert.setContentText("NanoleafMusic v1.1-b \nCopyright (c) 2020, Jaxcksn.\nAll rights reserved.");
+        alert.setContentText("NanoleafMusic v1.2-beta\nCopyright (c) 2021, Jaxcksn.\nAll rights reserved.");
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.setMinHeight(Region.USE_PREF_SIZE);
         dialogPane.getStylesheets().add("/gui.css");

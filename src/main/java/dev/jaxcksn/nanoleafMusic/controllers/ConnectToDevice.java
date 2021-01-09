@@ -218,7 +218,7 @@ public class ConnectToDevice {
             logger.info("Setting JavaFX scene to 'ConnectToSpotify' view");
             stage.setScene(scene);
         } catch (IOException e) {
-            Main.showException(e);
+            dev.jaxcksn.nanoleafMusic.Main.showException(e);
         }
 
     }

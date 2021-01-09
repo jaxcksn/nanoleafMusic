@@ -61,7 +61,7 @@ public class ConnectToSpotify {
                 spotifyManager.cbServer.destroy();
                 transitionToPlayer();
             } catch (IOException e) {
-                Main.showException(e);
+                dev.jaxcksn.nanoleafMusic.Main.showException(e);
             }
         }
     }
