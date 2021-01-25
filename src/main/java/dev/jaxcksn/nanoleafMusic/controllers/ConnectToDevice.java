@@ -9,6 +9,7 @@ import ch.qos.logback.classic.Logger;
 import dev.jaxcksn.NLJava;
 import dev.jaxcksn.nanoleafJava.NLDevice;
 import dev.jaxcksn.nanoleafJava.NLDeviceData;
+import dev.jaxcksn.nanoleafJava.NLDeviceModel;
 import dev.jaxcksn.nanoleafJava.NLException;
 import dev.jaxcksn.nanoleafMusic.DataManager;
 import dev.jaxcksn.nanoleafMusic.Main;
@@ -30,11 +31,14 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.BufferUnderflowException;
 import java.util.List;
 import java.util.Optional;
 
 public class ConnectToDevice {
+    public Button debugButton;
     @FXML
     private Button reconnectBtn;
     @FXML
@@ -54,6 +58,7 @@ public class ConnectToDevice {
         dataManager = new DataManager();
         if (!dataManager.hasSaved) {
             reconnectBtn.setDisable(true);
+            debugButton.setDisable(true);
         }
 
         deviceList = FXCollections.observableArrayList();
@@ -88,12 +93,27 @@ public class ConnectToDevice {
         assert dataManager.hasSaved;
         try {
             NLDevice savedDevice = dataManager.loadDevice();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("Connected to " + savedDevice.getDeviceName());
-            alert.setContentText("Successfully reconnected to saved device.");
+            Alert alert;
+
+
+            if (!Main.isMac() && savedDevice.deviceModel.equals(NLDeviceModel.CANVAS)) {
+                alert = new Alert(Alert.AlertType.WARNING);
+                alert.setHeaderText("Reconnected to Canvas device.");
+                alert.setContentText("No errors were thrown while reconnecting. But there may be an issue with reconnecting to Canvas devices on Windows.\n" +
+                        "\nIf you have issues reconnecting, try pressing the \"Clear Saved\" button and then trying to reconnect manually may fix this.");
+                alert.getButtonTypes().add(new ButtonType("HELP", ButtonBar.ButtonData.NO));
+            } else {
+                alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Connected to " + savedDevice.getDeviceName());
+                alert.setContentText("Successfully reconnected to saved device.");
+            }
+
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.getStylesheets().add("/gui.css");
-            alert.showAndWait();
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get().getText().equals("HELP")) {
+                Desktop.getDesktop().browse(new URI("https://github.com/jaxcksn/nanoleafMusic/issues/14"));
+            }
             logger.info("Successfully connected to {}", savedDevice.getDeviceName());
             transitionToSpotify(savedDevice);
         } catch (DataManagerException e) {
@@ -123,6 +143,10 @@ public class ConnectToDevice {
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.getStylesheets().add("/gui.css");
             alert.showAndWait();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -175,14 +199,16 @@ public class ConnectToDevice {
 
     }
 
+
     private void getAccessToken(NLDeviceData deviceData) {
         try {
             logger.info("Asking {} for an access token", deviceData.deviceName);
             NLDevice connectedDevice = new NLDevice(deviceData);
+
             logger.info("Successfully connected to {}", deviceData.deviceName);
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setHeaderText("Save device for quick reconnect?");
-            alert.setContentText("You can opt to save this device and access token to quickly reconnect next time. Saving this device will overwrite any previous saved devices.");
+            alert.setContentText("You can opt to save this device and access token to quickly reconnect next time.\nSaving this device will overwrite any previous saved devices.");
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.setMinHeight(Region.USE_PREF_SIZE);
             dialogPane.getStylesheets().add("/gui.css");
@@ -221,5 +247,21 @@ public class ConnectToDevice {
             dev.jaxcksn.nanoleafMusic.Main.showException(e);
         }
 
+    }
+
+    public void DebugReconnect(ActionEvent actionEvent) {
+        dataManager.removeDevice();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setHeaderText("Delete Saved Device?");
+        alert.setContentText("This will delete all reconnection data.");
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.setMinHeight(Region.USE_PREF_SIZE);
+        dialogPane.getStylesheets().add("/gui.css");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            reconnectBtn.setDisable(true);
+            debugButton.setDisable(true);
+            dataManager.removeDevice();
+        }
     }
 }

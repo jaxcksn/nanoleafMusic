@@ -12,6 +12,7 @@ import dev.jaxcksn.nanoleafMusic.musicEffect.EffectType;
 import dev.jaxcksn.nanoleafMusic.utility.DataManagerException;
 import dev.jaxcksn.nanoleafMusic.utility.Settings;
 import dev.jaxcksn.nanoleafMusic.utility.dMEC;
+import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 
 import java.util.prefs.BackingStoreException;
@@ -61,7 +62,7 @@ public class DataManager {
                 String hostName = deviceData[0];
                 int port = Integer.parseInt(deviceData[1]);
                 String accessToken = deviceData[2];
-                    logger.info("Loading device at {} from preferences", hostName);
+                logger.info("Loading device at {} from preferences", hostName);
                 return new NLDevice(new NLDeviceData(hostName, port, ""), accessToken);
 
             } catch (Exception e) {
@@ -69,6 +70,32 @@ public class DataManager {
                 throw new DataManagerException("Could not process saved device data, string may be malformed.", dMEC.MDS);
             }
         }
+    }
+
+    public JSONObject debugReconnectData() {
+        JSONObject data = new JSONObject();
+        String saved = preferences.get("savedDevice", null);
+        if (saved == null || saved.isEmpty() || !hasSaved) {
+            logger.error("Could not load from preferences, key is null or empty.");
+            throw new DataManagerException("Could not load from preferences, key is null or empty.", dMEC.NDS);
+        } else {
+            try {
+                String[] deviceData = saved.split(";", 3);
+                String hostName = deviceData[0];
+                int port = Integer.parseInt(deviceData[1]);
+                String accessToken = deviceData[2];
+                logger.info("Loading device at {} from preferences", hostName);
+                data.put("hostName", hostName);
+                data.put("port", port);
+                data.put("accessToken", accessToken);
+            } catch (Exception e) {
+                logger.error("Could not process saved device data, string may be malformed.", e);
+                throw new DataManagerException("Could not process saved device data, string may be malformed.", dMEC.MDS);
+            }
+        }
+
+
+        return data;
     }
 
     public void removeDevice() {
