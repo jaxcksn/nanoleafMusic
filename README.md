@@ -1,12 +1,11 @@
 <img src="./assets/icon.png" align="right" width="200"/>
 
 # NanoleafMusic
+### Notice: I am aware of this program not working, and I am in the process of writing new source code. However, I am currently in college, which comes first so I can't give an ### ETA of when it will be completed.
 
 > Sync your Nanoleaf Light Panels with Spotify
 
 NanoleafMusic is a quick and easy tool to sync your Spotify playback with your Nanoleaf light panels. It doesn't even require a rhythm module. You can use it with your own color palette, or have it use colors from the album art.
-
-**NOTE**: At this time, Canvas and Shapes are not supported. I only own and can test on the Light Panels so unless someone who has a Canvas or Shapes device would like to contribute and add support, it will likely will be awhile before either are supported.
 
 
 ## Installation
