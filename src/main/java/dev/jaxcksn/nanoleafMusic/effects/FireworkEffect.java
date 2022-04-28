@@ -117,8 +117,7 @@ public class FireworkEffect implements MusicEffect {
             int originPanelIndex = random.nextInt(panels.length);
             int panelID = panels[originPanelIndex].getId();
             // TODO steal code from NanoleafDevice to instantiate the correct class
-            Shapes s=(Shapes)device;
-            Panel[] neighbors = s.getNeighborPanels(panels[originPanelIndex], Arrays.asList(panels)).toArray(new Panel[0]);
+            Panel[] neighbors = device.getNeighborPanels(panels[originPanelIndex], Arrays.asList(panels)).toArray(new Panel[0]);
             int fireworkLength = random.nextInt(neighbors.length + 1);
             CustomEffect.Builder.createBuilderAsync(device, (x,ceb,z)->{
                 Frame toColor = new Frame(colorRGB[0], colorRGB[1], colorRGB[2], 1);
