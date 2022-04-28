@@ -289,7 +289,7 @@ public class EffectManager {
             if (currentPlayback.getIs_playing() && !isPlaying) {
                 isPlaying = true;
 
-                progress = currentPlayback.getProgress_ms() + 500;
+                progress = currentPlayback.getProgress_ms() + 1000;
                 displayTrackInformation(true, false);
             } else if (!currentPlayback.getIs_playing() && isPlaying) {
                 isPlaying = false;
