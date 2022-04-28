@@ -135,7 +135,6 @@ public class FireworkEffect implements MusicEffect {
                 for (int i = 0; i < fireworkLength; i++) {
                     ceb.addFrame(neighbors[i].getId(), toBlack);
                 }
-                new Thread(() -> {
                     try {
                         device.displayEffect(ceb.build("",false));
                     }  catch (IOException | NanoleafException e) {
@@ -143,8 +142,6 @@ public class FireworkEffect implements MusicEffect {
                         Main.showException(e);
                         System.exit(1);
                     }
-                }).start();
-
                 setNextPaletteColor();
             });
 
