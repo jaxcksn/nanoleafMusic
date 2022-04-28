@@ -169,15 +169,15 @@ public class PulseBeatEffect implements MusicEffect {
 
     public void setNeighbors(Panel panel, final List<Integer> marked,
                              Panel[] panels, CustomEffect.Builder ceb, java.awt.Color color,
-                             int time, NanoleafDevice s) {
+                             int time, NanoleafDevice device) {
         time += 1;
-        for (Panel p : s.getNeighborPanels(panel, Arrays.asList(panels))) {
+        for (Panel p : device.getNeighborPanels(panel, Arrays.asList(panels))) {
             if (!marked.contains(p.getId())) {
                 ceb.addFrame(p, new Frame(color.getRed(),
                         color.getGreen(), color.getBlue(), time));
                 ceb.addFrame(p, new Frame(0, 0, 0, 5));
                 marked.add(p.getId());
-                setNeighbors(p, marked, panels, ceb, color, time,s);
+                setNeighbors(p, marked, panels, ceb, color, time,device);
             }
         }
     }
