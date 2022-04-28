@@ -10,9 +10,11 @@ import dev.jaxcksn.nanoleafMusic.DataManager;
 import dev.jaxcksn.nanoleafMusic.Main;
 import dev.jaxcksn.nanoleafMusic.utility.DataManagerException;
 import io.github.rowak.nanoleafapi.Aurora;
-import io.github.rowak.nanoleafapi.AuroraMetadata;
-import io.github.rowak.nanoleafapi.StatusCodeException;
-import io.github.rowak.nanoleafapi.tools.Setup;
+import io.github.rowak.nanoleafapi.NanoleafDevice;
+import io.github.rowak.nanoleafapi.NanoleafException;
+import io.github.rowak.nanoleafapi.Shapes;
+import io.github.rowak.nanoleafapi.util.NanoleafDeviceMeta;
+import io.github.rowak.nanoleafapi.util.NanoleafSetup;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -36,6 +38,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.BufferUnderflowException;
 import java.util.List;
 import java.util.*;
@@ -51,7 +54,7 @@ public class ConnectToDevice {
     private AnchorPane loadingPane;
 
     private ObservableList<String> deviceList;
-    private List<AuroraMetadata> auroraList;
+    private List<NanoleafDeviceMeta> auroraList;
     private DataManager dataManager;
     private static final Logger logger
             = (Logger) LoggerFactory.getLogger("nanoleafMusic.ConnectToDevice");
@@ -90,13 +93,14 @@ public class ConnectToDevice {
         }
     }
 
-    private List<AuroraMetadata> findNanoleaf() throws IOException {
-        List<AuroraMetadata> auroras = new ArrayList<>();
+    private List<NanoleafDeviceMeta> findNanoleaf() throws IOException {
+        List<NanoleafDeviceMeta> auroras = new ArrayList<>();
 
         try {
             Service service = Service.fromName("_nanoleafapi._tcp");
             Query query = Query.createFor(service, Domain.LOCAL);
             Set<Instance> instances = query.runOnce();
+            auroras.add(new NanoleafDeviceMeta("192.168.0.20", 16021 ,"xxx","Shapes.Hexagon"));
             instances.forEach((instance -> {
                 try {
                     auroras.add(fromMDNSInstance(instance));
@@ -116,11 +120,11 @@ public class ConnectToDevice {
      * that the IPv4 address is used instead of the Ipv6 address.
      *
      * @param instance the MDNS instance to build from.
-     * @return an AuroraMetadata object
+     * @return an NanoleafDeviceMeta object
      * @throws ipv6Exception
      */
-    public static AuroraMetadata fromMDNSInstance(Instance instance) throws ipv6Exception {
-        AuroraMetadata metadata = new AuroraMetadata(null, 0, null, null);
+    public static NanoleafDeviceMeta fromMDNSInstance(Instance instance) throws ipv6Exception {
+        NanoleafDeviceMeta metadata = new NanoleafDeviceMeta(null, 0, null, null);
         Iterator<InetAddress> addresses = instance.getAddresses().iterator();
         String hostName,deviceId;
 
@@ -148,12 +152,12 @@ public class ConnectToDevice {
 
     private void findDevices() {
         setLoading(true);
-        List<AuroraMetadata> auroras = null;
+        List<NanoleafDeviceMeta> auroras = null;
         try {
             auroras = findNanoleaf();
             logger.info("Found {} devices from mDNS query", auroras.size());
             auroraList = auroras;
-            for (AuroraMetadata aurora : auroras) {
+            for (NanoleafDeviceMeta aurora : auroras) {
                 deviceList.add(aurora.getDeviceName());
             }
         } catch (IOException e) {
@@ -166,7 +170,7 @@ public class ConnectToDevice {
         //The button shouldn't be enabled if this is false.
         assert dataManager.hasSaved;
         try {
-            Aurora savedDevice = dataManager.loadDevice();
+            NanoleafDevice savedDevice = dataManager.loadDevice();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText("Connected to " + savedDevice.getName());
             alert.setContentText("Successfully reconnected to saved device.");
@@ -211,7 +215,7 @@ public class ConnectToDevice {
             setLoading(true);
 
             int auroraIndex = nanoleafList.getSelectionModel().getSelectedIndex();
-            AuroraMetadata selectedDevice = auroraList.get(auroraIndex);
+            NanoleafDeviceMeta selectedDevice = auroraList.get(auroraIndex);
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setHeaderText("Connect to Device");
@@ -254,11 +258,11 @@ public class ConnectToDevice {
 
     }
 
-    private void getAccessToken(AuroraMetadata metadata) {
+    private void getAccessToken(NanoleafDeviceMeta metadata) {
         try {
             logger.info("Asking {} for an access token", metadata.getDeviceName());
-            String accessToken = Setup.createAccessToken(metadata.getHostName(),metadata.getPort(),"v1");
-            Aurora connectedDevice = new Aurora(metadata.getHostName(),metadata.getPort(),"v1",accessToken);
+            String accessToken = NanoleafSetup.createAccessToken(metadata.getHostName(),metadata.getPort());
+            NanoleafDevice connectedDevice =NanoleafDevice.createDevice(metadata.getHostName(),metadata.getPort(),accessToken);
             logger.info("Successfully connected to {}", metadata.getDeviceName());
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setHeaderText("Save device for quick reconnect?");
@@ -272,7 +276,7 @@ public class ConnectToDevice {
             }
             transitionToSpotify(connectedDevice);
 
-        } catch (StatusCodeException.ForbiddenException e) {
+        } catch (NanoleafException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setHeaderText("Error connecting to " + metadata.getDeviceName());
             alert.setContentText("The request to get a access token for the device was refused, please make sure that the LED indicator on the controller is flashing white before attempting to connect.");
@@ -281,12 +285,12 @@ public class ConnectToDevice {
             dialogPane.getStylesheets().add("/gui.css");
             alert.showAndWait();
             setLoading(false);
-        } catch (StatusCodeException e) {
+        } catch (IOException e) {
             Main.showException(e);
         }
     }
 
-    private void transitionToSpotify(Aurora device) {
+    private void transitionToSpotify(NanoleafDevice device) {
         try {
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("/connectToSpotify.fxml"));
             Parent root = loader.load();

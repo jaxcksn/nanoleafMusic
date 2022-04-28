@@ -14,6 +14,7 @@ import dev.jaxcksn.nanoleafMusic.Main;
 import dev.jaxcksn.nanoleafMusic.effects.EffectType;
 import dev.jaxcksn.nanoleafMusic.utility.Settings;
 import io.github.rowak.nanoleafapi.Aurora;
+import io.github.rowak.nanoleafapi.NanoleafDevice;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -55,7 +56,7 @@ public class PlaybackView {
             = (Logger) LoggerFactory.getLogger("nanoleafMusic.PlaybackView");
     private Scene palettePickerScene;
 
-    public void initData(SpotifyApi spotifyApi, int expiresIn, Aurora device) {
+    public void initData(SpotifyApi spotifyApi, int expiresIn, NanoleafDevice device) {
         logger.info("Initializing the playback view");
         PulseBeatToggle.setUserData(EffectType.PULSEBEAT);
         FireworksToggle.setUserData(EffectType.FIREWORKS);

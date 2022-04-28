@@ -10,10 +10,11 @@ import com.wrapper.spotify.model_objects.miscellaneous.AudioAnalysisSegment;
 import dev.jaxcksn.nanoleafMusic.Main;
 import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
 import io.github.rowak.nanoleafapi.*;
-import io.github.rowak.nanoleafapi.effectbuilder.CustomEffectBuilder;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -44,7 +45,7 @@ public class PulseBeatEffect implements MusicEffect {
     private float loudness = 0.5f;
     private final Random random;
     private Color[] palette;
-    private final Aurora aurora;
+    private final NanoleafDevice aurora;
     private Panel[] panels;
     private int paletteIndex = 0;
     public boolean albumMode = false;
@@ -52,12 +53,12 @@ public class PulseBeatEffect implements MusicEffect {
     private static final Logger logger
             = (Logger) LoggerFactory.getLogger("nanoleafMusic.MusicEffect");
 
-    public PulseBeatEffect(Color[] palette, Aurora aurora) {
+    public PulseBeatEffect(Color[] palette, NanoleafDevice aurora) {
         this.palette = palette;
         this.aurora = aurora;
         try {
-            this.panels = aurora.panelLayout().getPanels();
-        } catch (StatusCodeException e) {
+            this.panels = aurora.getPanels().toArray(new Panel[0]);
+        } catch (NanoleafException | IOException e) {
             Main.showException(e);
         }
         random = new Random();
@@ -132,7 +133,7 @@ public class PulseBeatEffect implements MusicEffect {
         palette = colors;
     }
 
-    public void run(SpecificAudioAnalysis analysis) throws StatusCodeException {
+    public void run(SpecificAudioAnalysis analysis) {
         loudness = SpotifyEffectUtils.getLoudness(loudness, analysis);
         if (analysis.getBeat() != null && palette.length > 0) {
             int panelIndex = random.nextInt(panels.length);
@@ -140,42 +141,43 @@ public class PulseBeatEffect implements MusicEffect {
             int r = palette[paletteIndex].getRed();
             int g = palette[paletteIndex].getGreen();
             int b = palette[paletteIndex].getBlue();
-            java.awt.Color original = new java.awt.Color(r, g, b);
-            original = applyLoudnessToColor(original);
+            java.awt.Color original = applyLoudnessToColor(new java.awt.Color(r, g, b));
             java.awt.Color darker = original.darker().darker().darker();
-            CustomEffectBuilder ceb = new CustomEffectBuilder(aurora);
-            ceb.addFrame(panelId, new Frame(original.getRed(), original.getGreen(), original.getBlue(), 0, 1));
-            ceb.addFrame(panelId, new Frame(0, 0, 0, 0, 5));
-            List<Integer> marked = new ArrayList<>();
-            marked.add(panelId);
-            final int INITIAL_TIME = 1;
-            setNeighbors(panels[panelIndex], marked,
-                    panels, ceb, darker, INITIAL_TIME);
-            new Thread(() ->
-            {
-                try {
-                    aurora.effects().displayEffect(ceb.build("", false));
-                } catch (StatusCodeException sce) {
-                    logger.warn("Unrecoverable exception was thrown. Shutting down program.");
-                    Main.showException(sce);
-                    System.exit(1);
-                }
-            }).start();
-            setNextPaletteColor();
+             CustomEffect.Builder.createBuilderAsync(aurora, (x,ceb,z)->{
+                 ceb.addFrame(panelId, new Frame(original.getRed(), original.getGreen(), original.getBlue(), 1));
+                 ceb.addFrame(panelId, new Frame(0, 0, 0, 5));
+                 List<Integer> marked = new ArrayList<>();
+                 marked.add(panelId);
+                 final int INITIAL_TIME = 1;
+                 setNeighbors(panels[panelIndex], marked,
+                         panels, ceb, darker, INITIAL_TIME,(Shapes)aurora);
+                 new Thread(() ->
+                 {
+                     try {
+                         aurora.displayEffect(ceb.build("", false));
+                     } catch (NanoleafException | IOException sce) {
+                         logger.warn("Unrecoverable exception was thrown. Shutting down program.");
+                         Main.showException(sce);
+                         System.exit(1);
+                     }
+                 }).start();
+                 setNextPaletteColor();
+             });
+
         }
     }
 
     public void setNeighbors(Panel panel, final List<Integer> marked,
-                             Panel[] panels, CustomEffectBuilder ceb, java.awt.Color color,
-                             int time) {
+                             Panel[] panels, CustomEffect.Builder ceb, java.awt.Color color,
+                             int time, Shapes s) {
         time += 1;
-        for (Panel p : panel.getNeighbors(panels)) {
+        for (Panel p : s.getNeighborPanels(panel, Arrays.asList(panels))) {
             if (!marked.contains(p.getId())) {
                 ceb.addFrame(p, new Frame(color.getRed(),
-                        color.getGreen(), color.getBlue(), 0, time));
-                ceb.addFrame(p, new Frame(0, 0, 0, 0, 5));
+                        color.getGreen(), color.getBlue(), time));
+                ceb.addFrame(p, new Frame(0, 0, 0, 5));
                 marked.add(p.getId());
-                setNeighbors(p, marked, panels, ceb, color, time);
+                setNeighbors(p, marked, panels, ceb, color, time,s);
             }
         }
     }
