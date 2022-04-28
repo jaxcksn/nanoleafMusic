@@ -15,6 +15,24 @@
     <groupId>dev.jaxcksn</groupId>
     <artifactId>nanoleafMusicFX</artifactId>
     <version>1.0</version>
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2</url>
+        </repository>
+        <!--<repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/heremaps/oksse</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>-->
+        <repository>
+            <id>jitpack</id>
+            <name>Jitpack</name>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -33,8 +51,8 @@
         </dependency>
         <dependency>
             <groupId>io.github.rowak</groupId>
-            <artifactId>nanoleaf-aurora</artifactId>
-            <version>1.5.2</version>
+            <artifactId>nanoleaf-api</artifactId>
+            <version>0.1.2</version>
         </dependency>
         <dependency>
             <groupId>se.michaelthelin.spotify</groupId>
