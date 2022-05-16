@@ -10,9 +10,9 @@ import com.wrapper.spotify.model_objects.miscellaneous.AudioAnalysisMeasure;
 import dev.jaxcksn.nanoleafMusic.Main;
 import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
 import io.github.rowak.nanoleafapi.*;
-import io.github.rowak.nanoleafapi.effectbuilder.CustomEffectBuilder;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -21,7 +21,7 @@ import java.util.Random;
  */
 public class VibeEffect implements MusicEffect {
     public Color[] palette;
-    public Aurora device;
+    public NanoleafDevice device;
     private Panel[] panels;
     private final Random random;
     public boolean albumMode = false;
@@ -32,12 +32,12 @@ public class VibeEffect implements MusicEffect {
     private static final Logger logger
             = (Logger) LoggerFactory.getLogger("nanoleafMusic.MusicEffect");
 
-    public VibeEffect(Color[] palette, Aurora device) {
+    public VibeEffect(Color[] palette, NanoleafDevice device) {
         this.palette = palette;
         this.device = device;
         try {
-            this.panels = device.panelLayout().getPanels();
-        } catch (StatusCodeException e) {
+            this.panels = device.getPanels().toArray(new Panel[0]);
+        } catch (NanoleafException | IOException e) {
             Main.showException(e);
         }
         this.random = new Random();
@@ -52,7 +52,7 @@ public class VibeEffect implements MusicEffect {
     }
 
     @Override
-    public void run(SpecificAudioAnalysis analysis) throws StatusCodeException {
+    public void run(SpecificAudioAnalysis analysis) {
         if (analysis.getBeat() != null) {
             if (currentSection == null) {
                 currentSection = analysis.getBar();
@@ -64,21 +64,22 @@ public class VibeEffect implements MusicEffect {
             int panelId = panels[random.nextInt(panels.length)].getId();
             int[] colorRGB = {color.getRed(), color.getGreen(), color.getBlue()};
             java.awt.Color darkerColor = new java.awt.Color(colorRGB[0], colorRGB[1], colorRGB[2]).darker().darker().darker();
-            CustomEffectBuilder ceb = new CustomEffectBuilder(device);
-            ceb.addFrameToAllPanels(new Frame(darkerColor.getRed(),
-                    darkerColor.getGreen(), darkerColor.getBlue(), 0, 2));
-            ceb.addFrame(panelId, new Frame(colorRGB[0], colorRGB[1], colorRGB[2], 0, 1));
+            CustomEffect.Builder.createBuilderAsync(device, (x, ceb, z) -> {
+                ceb.addFrameToAllPanels(new Frame(darkerColor.getRed(),
+                        darkerColor.getGreen(), darkerColor.getBlue(), 2));
+                ceb.addFrame(panelId, new Frame(colorRGB[0], colorRGB[1], colorRGB[2], 1));
 
 
-            new Thread(() -> {
-                try {
-                    device.effects().displayEffect(ceb.build("", false));
-                } catch (StatusCodeException e) {
-                    logger.error("Unrecoverable exception was thrown. Shutting down program.");
-                    Main.showException(e);
-                    System.exit(1);
-                }
-            }).start();
+                new Thread(() -> {
+                    try {
+                        device.displayEffect(ceb.build("", false));
+                    } catch (NanoleafException | IOException e) {
+                        logger.error("Unrecoverable exception was thrown. Shutting down program.");
+                        Main.showException(e);
+                        System.exit(1);
+                    }
+                }).start();
+            });
 
 
         }

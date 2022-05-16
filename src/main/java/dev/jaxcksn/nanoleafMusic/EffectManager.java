@@ -19,13 +19,17 @@ import com.wrapper.spotify.requests.data.player.GetUsersCurrentlyPlayingTrackReq
 import com.wrapper.spotify.requests.data.tracks.GetAudioAnalysisForTrackRequest;
 import de.androidpit.colorthief.ColorThief;
 import dev.jaxcksn.nanoleafMusic.controllers.PlaybackView;
-import dev.jaxcksn.nanoleafMusic.effects.*;
+import dev.jaxcksn.nanoleafMusic.effects.EffectType;
+import dev.jaxcksn.nanoleafMusic.effects.FireworkEffect;
+import dev.jaxcksn.nanoleafMusic.effects.MusicEffect;
+import dev.jaxcksn.nanoleafMusic.effects.PulseBeatEffect;
+import dev.jaxcksn.nanoleafMusic.effects.VibeEffect;
 import dev.jaxcksn.nanoleafMusic.utility.PaletteColor;
 import dev.jaxcksn.nanoleafMusic.utility.Settings;
 import dev.jaxcksn.nanoleafMusic.utility.SpecificAudioAnalysis;
-import io.github.rowak.nanoleafapi.Aurora;
 import io.github.rowak.nanoleafapi.Color;
-import io.github.rowak.nanoleafapi.StatusCodeException;
+import io.github.rowak.nanoleafapi.NanoleafDevice;
+import io.github.rowak.nanoleafapi.NanoleafException;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -48,7 +52,7 @@ public class EffectManager {
     //--- Control Variables
     public SpotifyApi spotifyApi;
     private int expiresIn;
-    public Aurora device;
+    public NanoleafDevice device;
     private final PlaybackView viewController;
     public MusicEffect activeEffect;
 
@@ -65,7 +69,7 @@ public class EffectManager {
     private static final Logger logger
             = (Logger) LoggerFactory.getLogger("nanoleafMusic.EffectManager");
 
-    public EffectManager(SpotifyApi spotifyApi, int expiresIn, Aurora device, PlaybackView viewController) {
+    public EffectManager(SpotifyApi spotifyApi, int expiresIn, NanoleafDevice device, PlaybackView viewController) {
         this.spotifyApi = spotifyApi;
         this.expiresIn = expiresIn;
         this.device = device;
@@ -164,7 +168,7 @@ public class EffectManager {
                 if (isPlaying) {
                     try {
                         pulseTask();
-                    } catch (StatusCodeException | IOException e) {
+                    } catch (IOException e) {
                         Main.showException(e);
                     }
                 }
@@ -256,7 +260,7 @@ public class EffectManager {
     }
     // ---
 
-    private void pulseTask() throws StatusCodeException, IOException {
+    private void pulseTask() throws IOException {
         if (isPlaying) {
             SpecificAudioAnalysis analysis = SpecificAudioAnalysis.getAnalysis(currentTrackAnalysis, progress, 100);
             activeEffect.run(analysis);
@@ -285,7 +289,7 @@ public class EffectManager {
             if (currentPlayback.getIs_playing() && !isPlaying) {
                 isPlaying = true;
 
-                progress = currentPlayback.getProgress_ms() + 500;
+                progress = currentPlayback.getProgress_ms() + 1000;
                 displayTrackInformation(true, false);
             } else if (!currentPlayback.getIs_playing() && isPlaying) {
                 isPlaying = false;
