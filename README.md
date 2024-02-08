@@ -1,7 +1,7 @@
 <img src="./assets/icon.png" align="right" width="200"/>
 
 # NanoleafMusic
-### Notice: v2 is getting started with development very soon. Keep an eye on this repo for updates.
+### This project is no longer be developed due to changes with the Nanoleaf API and discontinuation of the product.
 
 > Sync your Nanoleaf Light Panels with Spotify
 
